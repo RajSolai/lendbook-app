@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "195133422264",
+    "firebase_url": "https://lendbook-5b2b7.firebaseio.com",
+    "project_id": "lendbook-5b2b7",
+    "storage_bucket": "lendbook-5b2b7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195133422264:android:df02bc58530063ff3e124d",
+        "android_client_info": {
+          "package_name": "rajsolai.lendbook.app.lendbook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "195133422264-cmnck01n1spaft73rfthd70u8a94uj77.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9hjxGGQciEdLIz6C51Oiuc1s_z2BogT4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "195133422264-cmnck01n1spaft73rfthd70u8a94uj77.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
