@@ -1,10 +1,13 @@
+import 'dart:io';
 import 'package:lendbook/pages/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
+import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as _path;
 import 'package:toast/toast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -13,15 +16,14 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   final _fireauth = FirebaseAuth.instance;
+  File _dpImage;
+  String _dpImageUrl;
   String emailid;
   String password;
   String displayName;
   String dp;
-
-  Future _setdata(key, data) async {
-    final _prefs = await SharedPreferences.getInstance();
-    _prefs.setString(key, data);
-  }
+  String _dpDefault =
+      "https://firebasestorage.googleapis.com/v0/b/lendbook-5b2b7.appspot.com/o/profilePics%2Fcat-icon.png?alt=media&token=98ddcd8e-a584-4488-b115-32c2b0ac39e1";
 
   void _emailVerificationAlert() {
     showDialog(
@@ -45,6 +47,37 @@ class _RegisterState extends State<Register> {
             ],
           );
         });
+  }
+
+  Future<void> _uploadDP() async {
+    // ! pickImage is considered to be Depreciated :-/
+    await ImagePicker.pickImage(source: ImageSource.gallery).then((value) {
+      setState(() {
+        _dpImage = value;
+      });
+    });
+    String filename = _path.basename(_dpImage.path);
+    StorageReference storageReference =
+        FirebaseStorage.instance.ref().child("/profilePics").child(filename);
+    StorageUploadTask storageUploadTask = storageReference.putFile(_dpImage);
+    if (storageUploadTask.isInProgress) {
+      Toast.show("Uploading Profile Picture", context,
+          backgroundColor: Color(0xFF9852f9),
+          gravity: Toast.BOTTOM,
+          duration: Toast.LENGTH_LONG);
+      print("File Uploading");
+    }
+    await storageUploadTask.onComplete;
+    storageReference.getDownloadURL().then((value) {
+      print("VALUE RETURN" + value);
+      setState(() {
+        _dpImageUrl = value;
+      });
+      Toast.show("Image Uploaded !", context,
+          backgroundColor: Color(0xFF9852f9),
+          gravity: Toast.BOTTOM,
+          duration: Toast.LENGTH_LONG);
+    });
   }
 
   void _loginAlerts(String title, String content) {
@@ -83,19 +116,22 @@ class _RegisterState extends State<Register> {
       }
       print(error.message);
     }).then((res) {
-      // user update info
+      // * user update info
       res.user.sendEmailVerification().then((value) {
         _emailVerificationAlert();
+        print("Email for verification sent");
       });
       UserUpdateInfo info = new UserUpdateInfo();
       info.displayName = displayname;
+      info.photoUrl = _dpImageUrl == null ? _dpDefault : _dpImageUrl;
       Firestore _db = Firestore.instance;
       res.user.updateProfile(info);
       var data = {
         'name': displayName,
         'email': emailid,
+        'dp': _dpImageUrl == null ? _dpDefault : _dpImageUrl
       };
-      _db.collection('AlluserDetails').document(email).setData(data);
+      _db.collection('userDetails').document(email).setData(data);
       _loginAlerts("Cheers 🍷", "your account is created, Now you can Login");
       Navigator.of(context).pushReplacementNamed("/login");
     });
@@ -121,6 +157,7 @@ class _RegisterState extends State<Register> {
                     Container(
                       padding: EdgeInsets.all(50),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
                             "Nick Name",
@@ -183,14 +220,76 @@ class _RegisterState extends State<Register> {
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10)),
                                   hintText:
-                                      'must contain atleast 6 characters'),
+                                      'Must contain atleast 6 characters'),
                               onChanged: (value) {
                                 setState(() {
                                   password = value;
                                 });
                               }),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            "Select Profile Picture",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              children: <Widget>[
+                                Container(
+                                    height: 70,
+                                    width: 70,
+                                    child: CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          _dpImageUrl == null
+                                              ? _dpDefault
+                                              : _dpImageUrl),
+                                    )),
+                                SizedBox(
+                                  width: 40,
+                                ),
+                                Container(
+                                  child: CupertinoButton(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Text(
+                                      "Upload",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    onPressed: () {
+                                      _uploadDP();
+                                    },
+                                  ),
+                                ),
+                                Container(
+                                  child: CupertinoButton(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Text(
+                                      "Clear",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _dpImage = null;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
+                    ),
+                    SizedBox(
+                      height: 10,
                     ),
                     CupertinoButton(
                       color: Color(0xFFF2C94C),
