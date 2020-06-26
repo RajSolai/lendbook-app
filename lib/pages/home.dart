@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lendbook/components/CustomAppBar.dart';
 import 'package:lendbook/components/menucards.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -24,6 +25,21 @@ class _HomeState extends State<Home> {
     {"title": "Name4", "icon": FontAwesomeIcons.book},
     {"title": "Name5", "icon": FontAwesomeIcons.book}
   ];
+
+  String _dpurl;
+
+  Future<void> _getdata(key) async {
+    final _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _dpurl = _prefs.getString(key);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getdata("dpurl");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +70,7 @@ class _HomeState extends State<Home> {
                 margin: EdgeInsets.all(0),
                 child: CustomAppBar(
                   title: "Home",
+                  dpurl: _dpurl,
                 ),
               ),
               SizedBox(
@@ -61,7 +78,7 @@ class _HomeState extends State<Home> {
               ),
               // * Container for main view
               Container(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -80,7 +97,6 @@ class _HomeState extends State<Home> {
                           ),
                           Container(
                             height: 200,
-                            margin: EdgeInsets.all(5),
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               physics: AlwaysScrollableScrollPhysics(),
@@ -106,7 +122,6 @@ class _HomeState extends State<Home> {
                           ),
                           Container(
                             height: 200,
-                            margin: EdgeInsets.all(5),
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               physics: AlwaysScrollableScrollPhysics(),
@@ -132,7 +147,6 @@ class _HomeState extends State<Home> {
                           ),
                           Container(
                             height: 200,
-                            margin: EdgeInsets.all(5),
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               physics: AlwaysScrollableScrollPhysics(),

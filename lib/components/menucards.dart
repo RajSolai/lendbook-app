@@ -13,8 +13,11 @@ class _MenuCardsState extends State<MenuCards> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.all(10),
+        margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
         child: GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, "/login");
+          },
           child: Container(
             padding: EdgeInsets.only(top: 70),
             height: 180,
@@ -23,7 +26,7 @@ class _MenuCardsState extends State<MenuCards> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  FaIcon(this.widget.icon , size: 25),
+                  FaIcon(this.widget.icon, size: 25),
                   SizedBox(
                     height: 5,
                   ),
@@ -42,8 +45,8 @@ class _MenuCardsState extends State<MenuCards> {
                 boxShadow: [
                   BoxShadow(
                     color: Color.fromRGBO(0, 0, 0, 0.1),
-                    spreadRadius: 2.0,
-                    blurRadius: 10.0,
+                    spreadRadius: 1.0,
+                    blurRadius: 5.0,
                   ),
                 ]),
           ),

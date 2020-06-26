@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as _path;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 class Register extends StatefulWidget {
@@ -22,25 +23,37 @@ class _RegisterState extends State<Register> {
   String password;
   String displayName;
   String dp;
+  String _city;
+  String _state;
+  String _phoneno;
+  String _waphoneno;
+  String userState;
   String _dpDefault =
       "https://firebasestorage.googleapis.com/v0/b/lendbook-5b2b7.appspot.com/o/profilePics%2Fcat-icon.png?alt=media&token=98ddcd8e-a584-4488-b115-32c2b0ac39e1";
+  bool _isSchool = false;
 
-  void _emailVerificationAlert() {
+  Future<void> _setdata(key, data) async {
+    final _prefs = await SharedPreferences.getInstance();
+    _prefs.setString(key, data);
+  }
+
+  Future<void> _emailVerificationAlert() async {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Email not Verified !😕"),
+          return CupertinoAlertDialog(
+            title: Text("Verification Email Sent! 📨"),
             content: Text(
-                "Hey, It seems Your EmailId is not verified. Please Verify your EmailID for further features like adding Favorites and Reseting Password"),
+                "Hey, Verification Email Has been sent to you, Please Verify your EmailID for further features like adding Favorites and Reseting Password"),
             actions: <Widget>[
-              CupertinoButton(
-                  child: Text("Okay,I'll do it 👍"),
+              CupertinoDialogAction(
+                  child: Text("Okay"),
                   onPressed: () {
                     Navigator.of(context).pop();
                   }),
-              CupertinoButton(
-                  child: Text("Nah 😑"),
+              CupertinoDialogAction(
+                  textStyle: TextStyle(color: Colors.red),
+                  child: Text("Nah"),
                   onPressed: () {
                     Navigator.of(context).pop();
                   })
@@ -64,7 +77,7 @@ class _RegisterState extends State<Register> {
       Toast.show("Uploading Profile Picture", context,
           backgroundColor: Color(0xFF9852f9),
           gravity: Toast.BOTTOM,
-          duration: Toast.LENGTH_LONG);
+          duration: Duration.hoursPerDay);
       print("File Uploading");
     }
     await storageUploadTask.onComplete;
@@ -73,6 +86,7 @@ class _RegisterState extends State<Register> {
       setState(() {
         _dpImageUrl = value;
       });
+      _setdata("dpurl", value);
       Toast.show("Image Uploaded !", context,
           backgroundColor: Color(0xFF9852f9),
           gravity: Toast.BOTTOM,
@@ -80,16 +94,16 @@ class _RegisterState extends State<Register> {
     });
   }
 
-  void _loginAlerts(String title, String content) {
+  Future<void> _loginAlerts(String title, String content) async {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return CupertinoAlertDialog(
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              CupertinoButton(
-                  child: Text("Okay 👍"),
+              CupertinoDialogAction(
+                  child: Text("Okay"),
                   onPressed: () {
                     Navigator.of(context).pop();
                   }),
@@ -98,7 +112,24 @@ class _RegisterState extends State<Register> {
         });
   }
 
-  void _signUp(email, pass, displayname) async {
+  void _checkValuesAndSignUp(email, pass, displayname) {
+    if (email != null &&
+        pass != null &&
+        displayname != null &&
+        _city != null &&
+        _state != null &&
+        _isSchool != null &&
+        _phoneno != null &&
+        _waphoneno != null) {
+      _signUp(email, pass, displayname);
+    } else {
+      print("Fill all the Values");
+      _loginAlerts("Values Not Filled 😕",
+          "Hey! , It Seems you missed some fields without filling");
+    }
+  }
+
+  Future<void> _signUp(email, pass, displayname) async {
     await _fireauth
         .createUserWithEmailAndPassword(email: email, password: pass)
         .catchError((error) {
@@ -127,11 +158,16 @@ class _RegisterState extends State<Register> {
       Firestore _db = Firestore.instance;
       res.user.updateProfile(info);
       var data = {
-        'name': displayName,
+        'displayname': displayName,
         'email': emailid,
-        'dp': _dpImageUrl == null ? _dpDefault : _dpImageUrl
+        'dpurl': _dpImageUrl == null ? _dpDefault : _dpImageUrl,
+        'city': _city.toUpperCase(),
+        'state': _state.toUpperCase(),
+        'phone': _phoneno,
+        'waphone': _waphoneno,
+        'grade': _isSchool ? "School" : "College"
       };
-      _db.collection('userDetails').document(email).setData(data);
+      _db.collection('userDetails').document(res.user.uid).setData(data);
       _loginAlerts("Cheers 🍷", "your account is created, Now you can Login");
       Navigator.of(context).pushReplacementNamed("/login");
     });
@@ -142,7 +178,7 @@ class _RegisterState extends State<Register> {
     return Scaffold(
         body: SingleChildScrollView(
             child: Container(
-                padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                padding: EdgeInsets.fromLTRB(0, 50, 0, 50),
                 child: Column(
                   children: <Widget>[
                     Container(
@@ -227,6 +263,98 @@ class _RegisterState extends State<Register> {
                                 });
                               }),
                           SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            "State",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          TextField(
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  hintText: "eg: Karnataka"),
+                              onChanged: (value) {
+                                setState(() {
+                                  _state = value;
+                                });
+                              }),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            "City",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          TextField(
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  hintText: 'eg : Bengaluru'),
+                              onChanged: (value) {
+                                setState(() {
+                                  _city = value;
+                                });
+                              }),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            "Phone Number (without +91)",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          TextField(
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  hintText: 'eg : 9984452254'),
+                              onChanged: (value) {
+                                setState(() {
+                                  _phoneno = value;
+                                });
+                              }),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            "WhatsApp Number (without +91)",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          TextField(
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  hintText: 'eg : 9984452254'),
+                              onChanged: (value) {
+                                setState(() {
+                                  _waphoneno = value;
+                                });
+                              }),
+                          SizedBox(
                             height: 20,
                           ),
                           Text(
@@ -234,9 +362,6 @@ class _RegisterState extends State<Register> {
                             textAlign: TextAlign.left,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          SizedBox(
-                            height: 10,
                           ),
                           Container(
                             padding: EdgeInsets.all(10),
@@ -278,6 +403,7 @@ class _RegisterState extends State<Register> {
                                     onPressed: () {
                                       setState(() {
                                         _dpImage = null;
+                                        _dpImageUrl = _dpDefault;
                                       });
                                     },
                                   ),
@@ -285,6 +411,18 @@ class _RegisterState extends State<Register> {
                               ],
                             ),
                           ),
+                          Container(
+                            child: ListTile(
+                              title: Text("Are you a School Student ?"),
+                              trailing: CupertinoSwitch(
+                                  value: _isSchool,
+                                  onChanged: (bool val) {
+                                    setState(() {
+                                      _isSchool = val;
+                                    });
+                                  }),
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -300,7 +438,7 @@ class _RegisterState extends State<Register> {
                             color: Colors.black, fontWeight: FontWeight.w500),
                       ),
                       onPressed: () {
-                        _signUp(emailid, password, displayName);
+                        _checkValuesAndSignUp(emailid, password, displayName);
                       },
                     ),
                     SizedBox(

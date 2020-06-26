@@ -97,125 +97,141 @@ class _AddBookState extends State<AddBook> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-          top: false,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              CustomAppBar(
-                title: "Donate Book",
-                variant: "no-avatar",
-              ),
-              SingleChildScrollView(
-                padding: EdgeInsets.only(left: 20, right: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Text(
-                      "Book Name",
-                      textAlign: TextAlign.left,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    TextField(
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            hintText: "eg: Operating Systems"),
-                        onChanged: (value) {
+        body: SafeArea(
+      top: false,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            CustomAppBar(
+              title: "Donate Book",
+              variant: "no-avatar",
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 10, right: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Text(
+                    "Book Name",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextField(
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          hintText: "eg: Operating Systems"),
+                      onChanged: (value) {
+                        setState(() {
+                          _bookName = value;
+                        });
+                      }),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Book Author",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextField(
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          hintText: "eg: DM Dhamdhere"),
+                      onChanged: (value) {
+                        setState(() {
+                          _bookAuthor = value;
+                        });
+                      }),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Book Pickup Location with LandMark",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextField(
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          hintText:
+                              "eg : Near Phonix Mall , Velachery , Chennai"),
+                      onChanged: (value) {
+                        setState(() {
+                          _bookAuthor = value;
+                        });
+                      }),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Select Book Condition",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    height: 60.0,
+                    padding: EdgeInsets.all(10),
+                    child: CupertinoPicker(
+                        itemExtent: 32.0,
+                        onSelectedItemChanged: (int index) {
                           setState(() {
-                            _bookName = value;
+                            _bookCondition = _bookConditions[index];
+                            print("The book condition is" + _bookCondition);
                           });
-                        }),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      "Book Author",
-                      textAlign: TextAlign.left,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    TextField(
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            hintText: "eg: DM Dhamdhere"),
-                        onChanged: (value) {
-                          setState(() {
-                            _bookAuthor = value;
-                          });
-                        }),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      height: 50.0,
-                      child: CupertinoPicker(
-                          itemExtent: 32.0,
-                          onSelectedItemChanged: (int index) {
-                            setState(() {
-                              _bookCondition = _bookConditions[index];
-                            });
-                          },
-                          children: List.generate(_bookConditions.length,
-                              (int index) {
-                            return new Center(
-                              child: new Text(_bookConditions[index]),
-                            );
+                        },
+                        children:
+                            List.generate(_bookConditions.length, (int index) {
+                          return new Center(
+                            child: new Text(_bookConditions[index]),
+                          );
+                        })),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Center(
+                      child: CupertinoButton(
+                          color: Color(0xFFF2C94C),
+                          child: Text(
+                            "Test Upload",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          onPressed: () {
+                            _uploadBookImage();
                           })),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      height: 50.0,
-                      child: CupertinoPicker(
-                          itemExtent: 32.0,
-                          onSelectedItemChanged: (int index) {
-                            setState(() {
-                              _bookCondition = _bookConditions[index];
-                            });
-                          },
-                          children: List.generate(_bookConditions.length,
-                              (int index) {
-                            return new Center(
-                              child: new Text(_bookConditions[index]),
-                            );
-                          })),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Center(
-                        child: CupertinoButton(
-                            color: Color(0xFFF2C94C),
-                            child: Text(
-                              "Test Upload",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            onPressed: () {
-                              _uploadBookImage();
-                            })),
-                    SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                ],
               ),
-            ],
-          )),
-    );
+            )
+          ],
+        ),
+      ),
+    ));
   }
 }

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:lendbook/pages/login.dart';
+import 'package:lendbook/pages/dash.dart';
 
 class CustomAppBar extends StatelessWidget {
-  final title, variant;
-  CustomAppBar({this.title, this.variant});
+  final _dpDefault =
+      "https://firebasestorage.googleapis.com/v0/b/lendbook-5b2b7.appspot.com/o/profilePics%2Fcat-icon.png?alt=media&token=98ddcd8e-a584-4488-b115-32c2b0ac39e1";
+
+  final title, variant, dpurl;
+  CustomAppBar({this.title, this.variant, this.dpurl});
 
   @override
   Widget build(BuildContext context) {
@@ -55,17 +58,12 @@ class CustomAppBar extends StatelessWidget {
               child: GestureDetector(
                 onTap: () {
                   Navigator.push(context,
-                      CupertinoPageRoute(builder: (context) => Login()));
+                      CupertinoPageRoute(builder: (context) => DashBoard()));
                 },
                 child: CircleAvatar(
-                    child: ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: Image(
-                    image: AssetImage(
-                      "./assets/avatar/cat-icon.png",
-                    ),
-                  ),
-                )),
+                  backgroundImage:
+                      NetworkImage(dpurl == null ? _dpDefault : dpurl),
+                ),
               )),
           SizedBox(
             width: 5,

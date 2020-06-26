@@ -20,35 +20,41 @@ class _LoginState extends State<Login> {
     _prefs.setString(key, data);
   }
 
-  void _emailVerificationAlert() {
+  Future<void> _emailVerificationAlert() async {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return CupertinoAlertDialog(
             title: Text("Email not Verified !😕"),
             content: Text(
-                "Hey, It seems Your EmailId is not verified. Please Verify your EmailID and Login again"),
+                "Hey, It seems Your EmailId is not verified. Please Verify your EmailID for further features like adding Favorites and Reseting Password"),
             actions: <Widget>[
-              CupertinoButton(
-                  child: Text("Okay,I'll do it 👍"),
+              CupertinoDialogAction(
+                  child: Text("Okay"),
                   onPressed: () {
                     Navigator.of(context).pop();
                   }),
+              CupertinoDialogAction(
+                  textStyle: TextStyle(color: Colors.red),
+                  child: Text("Nah"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  })
             ],
           );
         });
   }
 
-  void _loginAlerts(String title, String content) {
+  Future<void> _loginAlerts(String title, String content) async {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return CupertinoAlertDialog(
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              CupertinoButton(
-                  child: Text("Okay 👍"),
+              CupertinoDialogAction(
+                  child: Text("Okay"),
                   onPressed: () {
                     Navigator.of(context).pop();
                   }),
@@ -57,7 +63,16 @@ class _LoginState extends State<Login> {
         });
   }
 
-  void _login(email, pass) async {
+  void _checkAndLogin(email, pass) {
+    if (email != null && pass != null) {
+      _login(email, pass);
+    } else {
+      _loginAlerts("Values Not Filled 😕",
+          "Hey! , It Seems you missed some fields without filling");
+    }
+  }
+
+  Future<void> _login(email, pass) async {
     await _fireauth
         .signInWithEmailAndPassword(email: email, password: pass)
         .catchError((error) {
@@ -79,7 +94,6 @@ class _LoginState extends State<Login> {
     }).then((res) {
       if (res.user.isEmailVerified) {
         _setdata("uid", res.user.uid);
-        _setdata("username", res.user.displayName);
         Navigator.of(context).pushReplacementNamed("/home");
       } else {
         _emailVerificationAlert();
@@ -180,7 +194,7 @@ class _LoginState extends State<Login> {
                                 setState(() {
                                   password = value;
                                 });
-                              })
+                              }),
                         ],
                       ),
                     ),
@@ -192,7 +206,7 @@ class _LoginState extends State<Login> {
                           style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.w500),
                         ),
-                        onPressed: () => _login(emailid, password)),
+                        onPressed: () => _checkAndLogin(emailid, password)),
                     SizedBox(
                       height: 20,
                     ),
