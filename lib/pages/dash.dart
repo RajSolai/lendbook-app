@@ -27,7 +27,7 @@ class _DashBoardState extends State<DashBoard> {
     Firestore _db = Firestore.instance;
     _db
         .collection("userDetails")
-        .document(uid) //TODO: change to "uid" ASAP
+        .document(uid) 
         .get()
         .then((value) {
       setState(() {
@@ -116,7 +116,7 @@ class _DashBoardState extends State<DashBoard> {
                     ),
                     trailing: Text(_userDetails == null
                         ? "Loading"
-                        : "(+91) "+_userDetails["phone"]),
+                        : "(+91) " + _userDetails["phone"]),
                   ),
                   ListTile(
                     contentPadding: EdgeInsets.symmetric(horizontal: 40),
@@ -126,10 +126,17 @@ class _DashBoardState extends State<DashBoard> {
                     ),
                     trailing: Text(_userDetails == null
                         ? "Loading"
-                        : "(+91) "+_userDetails["waphone"]),
+                        : "(+91) " + _userDetails["waphone"]),
                   )
                 ],
               ),
+            ),
+            Center(
+              child: CupertinoButton(
+                  child: Text("View your Donations"),
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/posts");
+                  }),
             )
           ],
         ),

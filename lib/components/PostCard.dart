@@ -1,0 +1,62 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+class PostCard extends StatelessWidget {
+  final defaultImage =
+      "https://firebasestorage.googleapis.com/v0/b/lendbook-5b2b7.appspot.com/o/profilePics%2Fimage_picker1760171017670769672.jpg?alt=media&token=813ad095-ee58-41bc-b7a9-b031a3582bd9";
+  final bookName, bookSubject, bookImageUrl, postedDate;
+  PostCard(
+      {this.bookName, this.bookImageUrl, this.bookSubject, this.postedDate});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        padding: EdgeInsets.all(10),
+        width: double.maxFinite,
+        child: Card(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          elevation: 5.0,
+          child: Column(
+            children: <Widget>[
+              Container(
+                child: ClipRRect(
+                  child: Image.network(
+                    bookImageUrl == null ? defaultImage : bookImageUrl,
+                  ),
+                ),
+              ),
+              Container(
+                child: Column(
+                  children: <Widget>[
+                    ListTile(
+                      title: Text(
+                        "Book Name :",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      trailing: Text(bookName == null ? "No Name" : bookName),
+                    ),
+                    ListTile(
+                      title: Text(
+                        "Book Subject :",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      trailing: Text(
+                          bookSubject == null ? "No Subject" : bookSubject),
+                    ),
+                    ListTile(
+                      title: Text(
+                        "Posted on :",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      trailing:
+                          Text(postedDate == null ? "No data" : postedDate.toString().substring(0,10)),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ));
+  }
+}

@@ -82,13 +82,13 @@ class _HomeState extends State<Home> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    // * Container for University Books
+                    // * Container for Suggested Books
                     Container(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            "University Books",
+                            "Suggested Books for You !",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),
                           ),
@@ -111,53 +111,6 @@ class _HomeState extends State<Home> {
                           ),
                           SizedBox(
                             height: 20,
-                          ),
-                          Text(
-                            "School Books",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            height: 200,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              physics: AlwaysScrollableScrollPhysics(),
-                              itemCount: _schoolData.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return MenuCards(
-                                  name: _schoolData[index]["title"],
-                                  icon: _schoolData[index]["icon"],
-                                );
-                              },
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            "School Books",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            height: 200,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              physics: AlwaysScrollableScrollPhysics(),
-                              itemCount: _schoolData.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return MenuCards(
-                                  name: _schoolData[index]["title"],
-                                  icon: _schoolData[index]["icon"],
-                                );
-                              },
-                            ),
                           ),
                         ],
                       ),

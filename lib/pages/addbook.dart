@@ -6,7 +6,10 @@ import 'package:lendbook/components/CustomAppBar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as _path;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:random_string/random_string.dart';
 import 'package:toast/toast.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 class AddBook extends StatefulWidget {
   @override
@@ -15,16 +18,18 @@ class AddBook extends StatefulWidget {
 
 class _AddBookState extends State<AddBook> {
   String _bookImageUrl;
-  String _bookType;
+  File _rawImage;
   File _bookImage;
   String _bookName;
   String _bookAuthor;
   String _bookCondition;
-  String _donorName;
   String _donorPickupLocation;
-  String _donorPhonenumber;
-  String _donorWhatsapp;
-  String _donorMail;
+  String _uid;
+  Map _userDetails;
+  String _bookSubject;
+  // TODO : Change to another image
+  String _dpDefault =
+      "https://firebasestorage.googleapis.com/v0/b/lendbook-5b2b7.appspot.com/o/profilePics%2Fcat-icon.png?alt=media&token=98ddcd8e-a584-4488-b115-32c2b0ac39e1";
 
   List<String> _bookConditions = [
     "New Book",
@@ -33,16 +38,27 @@ class _AddBookState extends State<AddBook> {
     "Not Good"
   ];
 
-  void _basicAlerts(String title, String content) {
+  List<String> _bookSubjects = [
+    "Physics",
+    "Chemistry",
+    "ComputerScience",
+    "Maths",
+    "Medical",
+    "Language",
+    "Mechanical",
+    "Electronics And Electrical"
+  ];
+
+  Future<void> _basicAlerts(String title, String content) async {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return CupertinoAlertDialog(
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              CupertinoButton(
-                  child: Text("Okay 👍"),
+              CupertinoDialogAction(
+                  child: Text("Okay"),
                   onPressed: () {
                     Navigator.of(context).pop();
                   }),
@@ -51,12 +67,48 @@ class _AddBookState extends State<AddBook> {
         });
   }
 
+  Future<void> getUserData() async {
+    Firestore _firestore = Firestore.instance;
+    _firestore.collection("userDetails").document(_uid).get().then((value) {
+      setState(() {
+        _userDetails = value.data;
+      });
+      print("The User Value");
+      print(value.data);
+    });
+  }
+
+  Future<void> _getUID() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _uid = _prefs.get("uid");
+    });
+    print("The UID is" + _uid);
+  }
+
   Future<void> _uploadBookImage() async {
     // ! pickImage is considered to be Depreciated :-/
-    await ImagePicker.pickImage(source: ImageSource.gallery).then((value) {
+    // ignore: deprecated_member_use
+    await ImagePicker.pickImage(
+            source: ImageSource.gallery, maxHeight: 500, maxWidth: 500)
+        .then((temp) {
       setState(() {
-        _bookImage = value;
+        _rawImage = temp;
       });
+    });
+    await ImageCropper.cropImage(
+      sourcePath: _rawImage.path,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+      ],
+      androidUiSettings: AndroidUiSettings(
+          toolbarTitle: 'Crop Book Image',
+          toolbarColor: Color(0xFFF2C94C),
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.square,
+          lockAspectRatio: false),
+    ).then((value) {
+      _bookImage = value;
     });
     String filename = _path.basename(_bookImage.path);
     StorageReference storageReference =
@@ -66,7 +118,7 @@ class _AddBookState extends State<AddBook> {
       Toast.show("Book Image Uploading", context,
           backgroundColor: Color(0xFF9852f9),
           gravity: Toast.BOTTOM,
-          duration: Toast.LENGTH_LONG);
+          duration: Duration.secondsPerHour);
       print("File Uploading");
     }
     await storageUploadTask.onComplete;
@@ -82,15 +134,65 @@ class _AddBookState extends State<AddBook> {
     });
   }
 
+  void _checkAndaddBook() {
+    if (_bookName != null &&
+        _bookAuthor != null &&
+        _donorPickupLocation != null &&
+        _bookCondition != null &&
+        _bookSubject != null &&
+        _bookImageUrl != null) {
+      _addBook();
+    } else {
+      _basicAlerts("Values Not Filled 😕",
+          "Hey! , It Seems you missed some fields without filling");
+    }
+  }
+
   Future<void> _addBook() async {
     Firestore _db = Firestore.instance;
-    Map _data = {};
+    DateTime _date = DateTime.now();
+    String _bookId = randomAlphaNumeric(10);
+    var _bookData = {
+      'postedtime': _date.toString(),
+      'bookid': _bookId,
+      'bookname': _bookName,
+      'bookauthor': _bookAuthor,
+      'bookimage': _bookImageUrl,
+      'bookcondition': _bookCondition,
+      'booksubject': _bookSubject,
+      'bookpickuplocation': _donorPickupLocation,
+      'bookdonoruid': _userDetails['uid'],
+      'bookdonorprofile': _userDetails['dpurl'],
+      'bookdonor': _userDetails['displayname'],
+      'bookdonorphone': _userDetails['phone'],
+      'bookdonorwa': _userDetails['waphone']
+    };
+    print("Book data is :");
+    print(_bookData);
     await _db
-        .collection("books")
-        .document(_bookType)
-        .setData(_data)
+        .collection(_bookSubject)
+        .document(_bookId)
+        .setData(_bookData)
         .then((value) {
-      _basicAlerts("Added Book", "Book Successfully Posted for Donation");
+      _db
+          .collection("userDetails")
+          .document(_uid)
+          .collection("bookposts")
+          .document(_bookId)
+          .setData(_bookData)
+          .then((value) {
+        _basicAlerts("Added Book 👍", "Book Successfully Posted for Donation");
+      });
+    }).catchError((onError) {
+      print(onError);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getUID().then((value) {
+      getUserData();
     });
   }
 
@@ -173,7 +275,7 @@ class _AddBookState extends State<AddBook> {
                               "eg : Near Phonix Mall , Velachery , Chennai"),
                       onChanged: (value) {
                         setState(() {
-                          _bookAuthor = value;
+                          _donorPickupLocation = value;
                         });
                       }),
                   SizedBox(
@@ -188,7 +290,7 @@ class _AddBookState extends State<AddBook> {
                     height: 10,
                   ),
                   Container(
-                    height: 60.0,
+                    height: 70.0,
                     padding: EdgeInsets.all(10),
                     child: CupertinoPicker(
                         itemExtent: 32.0,
@@ -208,24 +310,98 @@ class _AddBookState extends State<AddBook> {
                   SizedBox(
                     height: 20,
                   ),
-                  SizedBox(
-                    height: 30,
+                  Text(
+                    "Select The Subject of Book",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                  Center(
-                      child: CupertinoButton(
-                          color: Color(0xFFF2C94C),
-                          child: Text(
-                            "Test Upload",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          onPressed: () {
-                            _uploadBookImage();
-                          })),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    height: 70.0,
+                    padding: EdgeInsets.all(10),
+                    child: CupertinoPicker(
+                        itemExtent: 32.0,
+                        onSelectedItemChanged: (int index) {
+                          setState(() {
+                            _bookSubject = _bookSubjects[index];
+                          });
+                        },
+                        children:
+                            List.generate(_bookSubjects.length, (int index) {
+                          return new Center(
+                            child: new Text(_bookSubjects[index]),
+                          );
+                        })),
+                  ),
                   SizedBox(
                     height: 20,
                   ),
+                  Text(
+                    "Upload Image of Book",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          height: 300,
+                          width: 300,
+                          padding: EdgeInsets.all(30),
+                          child: Image.network(_bookImageUrl == null
+                              ? _dpDefault
+                              : _bookImageUrl),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            CupertinoButton(
+                                child: Text(
+                                  "Upload Image",
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                ),
+                                onPressed: () {
+                                  _uploadBookImage();
+                                }),
+                            CupertinoButton(
+                                child: Text(
+                                  "Clear Image",
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _bookImage = null;
+                                    _bookImageUrl = null;
+                                  });
+                                }),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: CupertinoButton(
+                        color: Color(0xFFF2C94C),
+                        borderRadius: BorderRadius.circular(10),
+                        child: Text(
+                          "Donate Book",
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.w500),
+                        ),
+                        onPressed: () {
+                          _checkAndaddBook();
+                          print("hello");
+                        }),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  )
                 ],
               ),
             )

@@ -64,6 +64,7 @@ class _RegisterState extends State<Register> {
 
   Future<void> _uploadDP() async {
     // ! pickImage is considered to be Depreciated :-/
+    // ignore: deprecated_member_use
     await ImagePicker.pickImage(source: ImageSource.gallery).then((value) {
       setState(() {
         _dpImage = value;
