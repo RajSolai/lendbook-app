@@ -17,6 +17,7 @@ class AddBook extends StatefulWidget {
 }
 
 class _AddBookState extends State<AddBook> {
+  bool _isSchoolBook = false;
   String _bookImageUrl;
   File _rawImage;
   File _bookImage;
@@ -25,6 +26,8 @@ class _AddBookState extends State<AddBook> {
   String _bookCondition;
   String _donorPickupLocation;
   String _uid;
+  String _bookSchoolSubject;
+  String _bookCollegeSubject;
   Map _userDetails;
   String _bookSubject;
   // TODO : Change to another image
@@ -38,7 +41,17 @@ class _AddBookState extends State<AddBook> {
     "Not Good"
   ];
 
-  List<String> _bookSubjects = [
+  List<String> _bookGrades = ["School", "College"];
+
+  List<String> _bookSchoolSubjects = [
+    "Physics",
+    "Chemistry",
+    "ComputerScience",
+    "Maths",
+    "Language",
+  ];
+
+  List<String> _bookCollegeSubjects = [
     "Physics",
     "Chemistry",
     "ComputerScience",
@@ -53,14 +66,21 @@ class _AddBookState extends State<AddBook> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return CupertinoAlertDialog(
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              CupertinoDialogAction(
+              CupertinoButton(
                   child: Text("Okay"),
                   onPressed: () {
                     Navigator.of(context).pop();
+                  }),
+              CupertinoButton(
+                  child: Text("View Donations"),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed("/posts");
                   }),
             ],
           );
@@ -73,8 +93,6 @@ class _AddBookState extends State<AddBook> {
       setState(() {
         _userDetails = value.data;
       });
-      print("The User Value");
-      print(value.data);
     });
   }
 
@@ -83,7 +101,6 @@ class _AddBookState extends State<AddBook> {
     setState(() {
       _uid = _prefs.get("uid");
     });
-    print("The UID is" + _uid);
   }
 
   Future<void> _uploadBookImage() async {
@@ -119,11 +136,9 @@ class _AddBookState extends State<AddBook> {
           backgroundColor: Color(0xFF9852f9),
           gravity: Toast.BOTTOM,
           duration: Duration.secondsPerHour);
-      print("File Uploading");
     }
     await storageUploadTask.onComplete;
     storageReference.getDownloadURL().then((value) {
-      print("VALUE RETURN" + value);
       setState(() {
         _bookImageUrl = value;
       });
@@ -139,7 +154,6 @@ class _AddBookState extends State<AddBook> {
         _bookAuthor != null &&
         _donorPickupLocation != null &&
         _bookCondition != null &&
-        _bookSubject != null &&
         _bookImageUrl != null) {
       _addBook();
     } else {
@@ -152,10 +166,12 @@ class _AddBookState extends State<AddBook> {
     Firestore _db = Firestore.instance;
     DateTime _date = DateTime.now();
     String _bookId = randomAlphaNumeric(10);
+    _bookSubject =
+        _bookSchoolSubject == null ? _bookCollegeSubject : _bookSchoolSubject;
     var _bookData = {
       'postedtime': _date.toString(),
       'bookid': _bookId,
-      'bookname': _bookName,
+      'bookname': _bookName.toUpperCase(),
       'bookauthor': _bookAuthor,
       'bookimage': _bookImageUrl,
       'bookcondition': _bookCondition,
@@ -167,10 +183,10 @@ class _AddBookState extends State<AddBook> {
       'bookdonorphone': _userDetails['phone'],
       'bookdonorwa': _userDetails['waphone']
     };
-    print("Book data is :");
-    print(_bookData);
     await _db
-        .collection(_bookSubject)
+        .collection("BookPosts")
+        .document(_isSchoolBook ? "school" : "college")
+        .collection(_bookSubject.toUpperCase())
         .document(_bookId)
         .setData(_bookData)
         .then((value) {
@@ -297,7 +313,6 @@ class _AddBookState extends State<AddBook> {
                         onSelectedItemChanged: (int index) {
                           setState(() {
                             _bookCondition = _bookConditions[index];
-                            print("The book condition is" + _bookCondition);
                           });
                         },
                         children:
@@ -319,21 +334,83 @@ class _AddBookState extends State<AddBook> {
                     height: 10,
                   ),
                   Container(
-                    height: 70.0,
-                    padding: EdgeInsets.all(10),
-                    child: CupertinoPicker(
-                        itemExtent: 32.0,
-                        onSelectedItemChanged: (int index) {
-                          setState(() {
-                            _bookSubject = _bookSubjects[index];
-                          });
-                        },
-                        children:
-                            List.generate(_bookSubjects.length, (int index) {
-                          return new Center(
-                            child: new Text(_bookSubjects[index]),
-                          );
-                        })),
+                    child: ListTile(
+                      title: Text("Is this a School Book ?"),
+                      trailing: CupertinoSwitch(
+                          value: _isSchoolBook,
+                          onChanged: (bool val) {
+                            setState(() {
+                              _isSchoolBook = val;
+                            });
+                          }),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  IndexedStack(
+                    index: _isSchoolBook ? 0 : 1,
+                    children: <Widget>[
+                      Container(
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              height: 70.0,
+                              padding: EdgeInsets.all(10),
+                              child: AbsorbPointer(
+                                  absorbing: false,
+                                  child: CupertinoPicker(
+                                      itemExtent: 32.0,
+                                      onSelectedItemChanged: (int index) {
+                                        setState(() {
+                                          _bookSchoolSubject =
+                                              _bookSchoolSubjects[index];
+                                        });
+                                      },
+                                      children: List.generate(
+                                          _bookSchoolSubjects.length,
+                                          (int index) {
+                                        return new Center(
+                                          child: new Text(
+                                              _bookSchoolSubjects[index]),
+                                        );
+                                      }))),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              height: 70.0,
+                              padding: EdgeInsets.all(10),
+                              child: AbsorbPointer(
+                                  absorbing: false,
+                                  child: CupertinoPicker(
+                                      itemExtent: 32.0,
+                                      onSelectedItemChanged: (int index) {
+                                        setState(() {
+                                          _bookCollegeSubject =
+                                              _bookCollegeSubjects[index];
+                                        });
+                                      },
+                                      children: List.generate(
+                                          _bookCollegeSubjects.length,
+                                          (int index) {
+                                        return new Center(
+                                          child: new Text(
+                                              _bookCollegeSubjects[index]),
+                                        );
+                                      }))),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
                   ),
                   SizedBox(
                     height: 20,
@@ -396,7 +473,6 @@ class _AddBookState extends State<AddBook> {
                         ),
                         onPressed: () {
                           _checkAndaddBook();
-                          print("hello");
                         }),
                   ),
                   SizedBox(

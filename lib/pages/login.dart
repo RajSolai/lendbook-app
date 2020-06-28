@@ -24,19 +24,23 @@ class _LoginState extends State<Login> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return CupertinoAlertDialog(
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: Text("Email not Verified !😕"),
             content: Text(
                 "Hey, It seems Your EmailId is not verified. Please Verify your EmailID for further features like adding Favorites and Reseting Password"),
             actions: <Widget>[
-              CupertinoDialogAction(
+              CupertinoButton(
                   child: Text("Okay"),
                   onPressed: () {
                     Navigator.of(context).pop();
                   }),
-              CupertinoDialogAction(
-                  textStyle: TextStyle(color: Colors.red),
-                  child: Text("Nah"),
+              CupertinoButton(
+                  child: Text(
+                    "Nah",
+                    style: TextStyle(color: Colors.red),
+                  ),
                   onPressed: () {
                     Navigator.of(context).pop();
                   })
@@ -49,11 +53,13 @@ class _LoginState extends State<Login> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return CupertinoAlertDialog(
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              CupertinoDialogAction(
+              CupertinoButton(
                   child: Text("Okay"),
                   onPressed: () {
                     Navigator.of(context).pop();

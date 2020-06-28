@@ -44,6 +44,7 @@ class _MyPostsState extends State<MyPosts> {
                         .collection("userDetails")
                         .document(uid)
                         .collection("bookposts")
+                        .orderBy('postedtime')
                         .snapshots(),
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {

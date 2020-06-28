@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lendbook/components/CustomAppBar.dart';
-import 'package:lendbook/components/menucards.dart';
+import 'package:lendbook/components/PostCard.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lendbook/components/homecards.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
@@ -10,35 +12,38 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Map> _universityData = [
-    {"title": "Name1", "icon": FontAwesomeIcons.book},
-    {"title": "Name2", "icon": FontAwesomeIcons.book},
-    {"title": "Name3", "icon": FontAwesomeIcons.book},
-    {"title": "Name4", "icon": FontAwesomeIcons.book},
-    {"title": "Name5", "icon": FontAwesomeIcons.book}
-  ];
-
-  List<Map> _schoolData = [
-    {"title": "Name1", "icon": FontAwesomeIcons.book},
-    {"title": "Name2", "icon": FontAwesomeIcons.book},
-    {"title": "Name3", "icon": FontAwesomeIcons.book},
-    {"title": "Name4", "icon": FontAwesomeIcons.book},
-    {"title": "Name5", "icon": FontAwesomeIcons.book}
-  ];
-
+  String _uid;
   String _dpurl;
+  String _userFavSub;
+  String _userGrade;
 
-  Future<void> _getdata(key) async {
+  Future<void> _getdata() async {
     final _prefs = await SharedPreferences.getInstance();
     setState(() {
-      _dpurl = _prefs.getString(key);
+      _dpurl = _prefs.getString("dpurl");
+      _uid = _prefs.getString("uid");
+    });
+  }
+
+  // TODO : Complete the Algorithm !
+  Future<void> _displayAlgorithm() async {
+    /* THis is the Main algorithm of displaying the books needed for the
+      users */
+    Firestore _db = Firestore.instance;
+    _db.collection("userDetails").document(_uid).get().then((value) {
+      setState(() {
+        _userFavSub = value.data['userinterest'];
+        _userGrade = value.data['grade'];
+      });
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _getdata("dpurl");
+    _getdata().then((value) {
+      _displayAlgorithm();
+    });
   }
 
   @override
@@ -58,70 +63,88 @@ class _HomeState extends State<Home> {
           ),
           backgroundColor: Color(0xFF9852f9)),
       body: SafeArea(
-        top: false,
-        maintainBottomViewPadding: false,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(0),
+          top: false,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(0),
-                margin: EdgeInsets.all(0),
-                child: CustomAppBar(
-                  title: "Home",
-                  dpurl: _dpurl,
-                ),
+              CustomAppBar(
+                title: "Home",
+                dpurl: _dpurl,
+                variant: "search",
               ),
               SizedBox(
-                height: 30,
+                height: 10,
               ),
-              // * Container for main view
               Container(
                 padding: EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    // * Container for Suggested Books
-                    Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "Suggested Books for You !",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            height: 200,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              physics: AlwaysScrollableScrollPhysics(),
-                              itemCount: _universityData.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return MenuCards(
-                                  name: _universityData[index]["title"],
-                                  icon: _universityData[index]["icon"],
-                                );
-                              },
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+                child: Text(
+                  "Books Based on your Favorite Subject !",
+                  style: TextStyle(fontWeight: FontWeight.w200, fontSize: 18),
                 ),
-              )
+              ),
+              // * Here goes the stream Builder
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                    stream: Firestore.instance
+                        .collection("BookPosts")
+                        .document(_userGrade.toLowerCase())
+                        .collection(_userFavSub.toUpperCase())
+                        .orderBy('postedtime')
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasError) {
+                        print(snapshot.error);
+                        return Text("Errot in Snapshot");
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return SingleChildScrollView(
+                            child: Container(
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                height: 100,
+                                width: 100,
+                                child: Image.asset(
+                                    "./assets/icons/loading-logo.png"),
+                              ),
+                              Center(
+                                child: Text(
+                                  "Fetching your Favorites!",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Center(
+                                child: Text(
+                                  "This might take a second",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontStyle: FontStyle.italic),
+                                ),
+                              )
+                            ],
+                          ),
+                        ));
+                      } else {
+                        return ListView(
+                          padding: EdgeInsets.all(10),
+                          children: snapshot.data.documents
+                              .map((DocumentSnapshot document) {
+                            return HomeCards(
+                                imgurl: document['bookimage'],
+                                bookname: document['bookname'],
+                                bookauthor: document['bookauthor'],
+                                booksubject: document['booksubject']);
+                          }).toList(),
+                        );
+                      }
+                    }),
+              ),
             ],
-          ),
-        ),
-      ),
+          )),
     );
   }
 }

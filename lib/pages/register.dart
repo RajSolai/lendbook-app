@@ -27,10 +27,30 @@ class _RegisterState extends State<Register> {
   String _state;
   String _phoneno;
   String _waphoneno;
+  String _userInterestSchool;
+  String _userInterestCollege;
   String userState;
   String _dpDefault =
       "https://firebasestorage.googleapis.com/v0/b/lendbook-5b2b7.appspot.com/o/profilePics%2Fcat-icon.png?alt=media&token=98ddcd8e-a584-4488-b115-32c2b0ac39e1";
   bool _isSchool = false;
+  List<String> _userInterestsSchool = [
+    "Maths",
+    "Physics",
+    "Chemistry",
+    "ComputerScience",
+    "Language",
+    "Biology"
+  ];
+  List<String> _userInterestsCollege = [
+    "Maths",
+    "Physics",
+    "Chemistry",
+    "ComputerScience",
+    "Language",
+    "Mechanical",
+    "Medical",
+    "Electronics and Electrical"
+  ];
 
   Future<void> _setdata(key, data) async {
     final _prefs = await SharedPreferences.getInstance();
@@ -41,19 +61,23 @@ class _RegisterState extends State<Register> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return CupertinoAlertDialog(
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: Text("Verification Email Sent! 📨"),
             content: Text(
                 "Hey, Verification Email Has been sent to you, Please Verify your EmailID for further features like adding Favorites and Reseting Password"),
             actions: <Widget>[
-              CupertinoDialogAction(
+              CupertinoButton(
                   child: Text("Okay"),
                   onPressed: () {
                     Navigator.of(context).pop();
                   }),
-              CupertinoDialogAction(
-                  textStyle: TextStyle(color: Colors.red),
-                  child: Text("Nah"),
+              CupertinoButton(
+                  child: Text(
+                    "Nah",
+                    style: TextStyle(color: Colors.red),
+                  ),
                   onPressed: () {
                     Navigator.of(context).pop();
                   })
@@ -79,11 +103,9 @@ class _RegisterState extends State<Register> {
           backgroundColor: Color(0xFF9852f9),
           gravity: Toast.BOTTOM,
           duration: Duration.hoursPerDay);
-      print("File Uploading");
     }
     await storageUploadTask.onComplete;
     storageReference.getDownloadURL().then((value) {
-      print("VALUE RETURN" + value);
       setState(() {
         _dpImageUrl = value;
       });
@@ -99,11 +121,13 @@ class _RegisterState extends State<Register> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return CupertinoAlertDialog(
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              CupertinoDialogAction(
+              CupertinoButton(
                   child: Text("Okay"),
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -124,7 +148,6 @@ class _RegisterState extends State<Register> {
         _waphoneno != null) {
       _signUp(email, pass, displayname);
     } else {
-      print("Fill all the Values");
       _loginAlerts("Values Not Filled 😕",
           "Hey! , It Seems you missed some fields without filling");
     }
@@ -151,7 +174,6 @@ class _RegisterState extends State<Register> {
       // * user update info
       res.user.sendEmailVerification().then((value) {
         _emailVerificationAlert();
-        print("Email for verification sent");
       });
       UserUpdateInfo info = new UserUpdateInfo();
       info.displayName = displayname;
@@ -166,7 +188,10 @@ class _RegisterState extends State<Register> {
         'state': _state.toUpperCase(),
         'phone': _phoneno,
         'waphone': _waphoneno,
-        'grade': _isSchool ? "School" : "College"
+        'grade': _isSchool ? "School" : "College",
+        'userinterest': _userInterestSchool == null
+            ? _userInterestCollege
+            : _userInterestSchool
       };
       _db.collection('userDetails').document(res.user.uid).setData(data);
       _loginAlerts("Cheers 🍷", "your account is created, Now you can Login");
@@ -356,6 +381,111 @@ class _RegisterState extends State<Register> {
                                 });
                               }),
                           SizedBox(
+                            height: 15,
+                          ),
+                          Container(
+                            child: ListTile(
+                              title: Text("Are you a School Student ?"),
+                              trailing: CupertinoSwitch(
+                                  value: _isSchool,
+                                  onChanged: (bool val) {
+                                    setState(() {
+                                      _isSchool = val;
+                                    });
+                                  }),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          IndexedStack(
+                            index: _isSchool ? 0 : 1,
+                            children: <Widget>[
+                              Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text(
+                                      "Select your Favorite Subject(School)",
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      height: 70.0,
+                                      padding: EdgeInsets.all(10),
+                                      child: AbsorbPointer(
+                                          absorbing: false,
+                                          child: CupertinoPicker(
+                                              itemExtent: 32.0,
+                                              onSelectedItemChanged:
+                                                  (int index) {
+                                                setState(() {
+                                                  _userInterestSchool =
+                                                      _userInterestsSchool[
+                                                          index];
+                                                });
+                                              },
+                                              children: List.generate(
+                                                  _userInterestsSchool.length,
+                                                  (int index) {
+                                                return new Center(
+                                                  child: new Text(
+                                                      _userInterestsSchool[
+                                                          index]),
+                                                );
+                                              }))),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text(
+                                      "Select your Favorite Subject",
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      height: 70.0,
+                                      padding: EdgeInsets.all(10),
+                                      child: AbsorbPointer(
+                                          absorbing: false,
+                                          child: CupertinoPicker(
+                                              itemExtent: 32.0,
+                                              onSelectedItemChanged:
+                                                  (int index) {
+                                                setState(() {
+                                                  _userInterestCollege =
+                                                      _userInterestsCollege[
+                                                          index];
+                                                });
+                                              },
+                                              children: List.generate(
+                                                  _userInterestsCollege.length,
+                                                  (int index) {
+                                                return new Center(
+                                                  child: new Text(
+                                                      _userInterestsCollege[
+                                                          index]),
+                                                );
+                                              }))),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
                             height: 20,
                           ),
                           Text(
@@ -412,18 +542,6 @@ class _RegisterState extends State<Register> {
                               ],
                             ),
                           ),
-                          Container(
-                            child: ListTile(
-                              title: Text("Are you a School Student ?"),
-                              trailing: CupertinoSwitch(
-                                  value: _isSchool,
-                                  onChanged: (bool val) {
-                                    setState(() {
-                                      _isSchool = val;
-                                    });
-                                  }),
-                            ),
-                          )
                         ],
                       ),
                     ),

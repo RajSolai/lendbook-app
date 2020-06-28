@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lendbook/pages/addbook.dart';
 import 'package:lendbook/pages/myposts.dart';
+import 'package:lendbook/pages/search.dart';
 import 'package:lendbook/pages/splash.dart';
 import 'package:lendbook/pages/login.dart';
 import 'package:lendbook/pages/register.dart';
@@ -21,7 +22,8 @@ class App extends StatelessWidget {
         "/register": (context) => Register(),
         "/home": (context) => Home(),
         "/addbook": (context) => AddBook(),
-        "/posts": (context) => MyPosts()
+        "/posts": (context) => MyPosts(),
+        "/search": (context) => SearchPage()
       },
       theme: ThemeData(
           fontFamily: "Inter",

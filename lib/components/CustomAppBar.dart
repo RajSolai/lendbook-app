@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lendbook/pages/dash.dart';
 
 class CustomAppBar extends StatelessWidget {
@@ -36,12 +37,53 @@ class CustomAppBar extends StatelessWidget {
             padding: EdgeInsets.all(10),
             child: Text(
               this.title,
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
           SizedBox(
             width: 80,
           ),
+        ],
+      ));
+    } else if (variant == "search") {
+      return Container(
+          child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(top: 40, bottom: 0, left: 10),
+            padding: EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        CupertinoPageRoute(builder: (context) => DashBoard()));
+                  },
+                  child: CircleAvatar(
+                    backgroundImage:
+                        NetworkImage(dpurl == null ? _dpDefault : dpurl),
+                  ),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  this.title,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          Container(
+              margin: EdgeInsets.only(top: 40, bottom: 0, right: 10),
+              child: IconButton(
+                  icon: FaIcon(FontAwesomeIcons.search),
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/search");
+                  }))
         ],
       ));
     } else {
@@ -73,7 +115,7 @@ class CustomAppBar extends StatelessWidget {
             padding: EdgeInsets.all(10),
             child: Text(
               this.title,
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
           SizedBox(

@@ -16,7 +16,6 @@ class _SplashState extends State<Splash> {
     await Future.delayed(Duration(seconds: 3));
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     uid = _prefs.getString("uid");
-    print("saved uid is " + _prefs.getString("uid").toString());
     if (uid == null) {
       Navigator.pushReplacementNamed(context, "/register");
     } else {

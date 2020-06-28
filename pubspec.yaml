@@ -30,6 +30,7 @@ dependencies:
   firebase_core:
   random_string: ^2.1.0
   image_cropper: ^1.2.3
+  cached_network_image: ^2.2.0+1
   firebase_auth:
   shared_preferences: any
   font_awesome_flutter:

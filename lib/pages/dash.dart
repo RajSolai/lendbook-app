@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,11 +26,7 @@ class _DashBoardState extends State<DashBoard> {
 
   Future<void> _getUserData() async {
     Firestore _db = Firestore.instance;
-    _db
-        .collection("userDetails")
-        .document(uid) 
-        .get()
-        .then((value) {
+    _db.collection("userDetails").document(uid).get().then((value) {
       setState(() {
         _userDetails = value.data;
         _userDpUrl = value.data['dpurl'];
@@ -70,7 +67,7 @@ class _DashBoardState extends State<DashBoard> {
                     height: 80,
                     width: 80,
                     child: CircleAvatar(
-                      backgroundImage: NetworkImage(
+                      backgroundImage: CachedNetworkImageProvider(
                           _userDpUrl == null ? _dpDefault : _userDpUrl,
                           scale: 3.0),
                     ),

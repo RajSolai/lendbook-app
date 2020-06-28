@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class PostCard extends StatelessWidget {
   final defaultImage =
@@ -21,9 +22,13 @@ class PostCard extends StatelessWidget {
             children: <Widget>[
               Container(
                 child: ClipRRect(
-                  child: Image.network(
-                    bookImageUrl == null ? defaultImage : bookImageUrl,
-                  ),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20.0),
+                      topRight: Radius.circular(20.0)),
+                  child: CachedNetworkImage(
+                      imageUrl:
+                          bookImageUrl == null ? defaultImage : bookImageUrl,
+                      placeholder: (context, url) => Text("Loading Image...")),
                 ),
               ),
               Container(
@@ -49,8 +54,9 @@ class PostCard extends StatelessWidget {
                         "Posted on :",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      trailing:
-                          Text(postedDate == null ? "No data" : postedDate.toString().substring(0,10)),
+                      trailing: Text(postedDate == null
+                          ? "No data"
+                          : postedDate.toString().substring(0, 10)),
                     )
                   ],
                 ),
