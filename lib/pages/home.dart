@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lendbook/components/CustomAppBar.dart';
-import 'package:lendbook/components/PostCard.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lendbook/components/homecards.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -87,8 +86,11 @@ class _HomeState extends State<Home> {
                 child: StreamBuilder<QuerySnapshot>(
                     stream: Firestore.instance
                         .collection("BookPosts")
-                        .document(_userGrade.toLowerCase())
-                        .collection(_userFavSub.toUpperCase())
+                        .document(
+                            _userGrade == null ? "" : _userGrade.toLowerCase())
+                        .collection(_userFavSub == null
+                            ? ""
+                            : _userFavSub.toUpperCase())
                         .orderBy('postedtime')
                         .snapshots(),
                     builder: (BuildContext context,
