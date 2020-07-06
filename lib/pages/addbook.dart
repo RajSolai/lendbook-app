@@ -177,7 +177,7 @@ class _AddBookState extends State<AddBook> {
       'bookcondition': _bookCondition,
       'booksubject': _bookSubject,
       'bookpickuplocation': _donorPickupLocation,
-      'bookdonoruid': _userDetails['uid'],
+      'bookdonoruid': _uid,
       'bookdonorprofile': _userDetails['dpurl'],
       'bookdonor': _userDetails['displayname'],
       'bookdonorphone': _userDetails['phone'],

@@ -40,6 +40,7 @@ dependencies:
   cloud_firestore:
   image_picker:
   firebase_storage:
+  badges: any
 
 dev_dependencies:
   flutter_test:

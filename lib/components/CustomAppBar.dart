@@ -1,18 +1,68 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lendbook/pages/dash.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:badges/badges.dart';
 
-class CustomAppBar extends StatelessWidget {
-  final _dpDefault =
-      "https://firebasestorage.googleapis.com/v0/b/lendbook-5b2b7.appspot.com/o/profilePics%2Fcat-icon.png?alt=media&token=98ddcd8e-a584-4488-b115-32c2b0ac39e1";
-
+class CustomAppBar extends StatefulWidget {
   final title, variant, dpurl;
   CustomAppBar({this.title, this.variant, this.dpurl});
 
   @override
+  _CustomAppBarState createState() => _CustomAppBarState();
+}
+
+class _CustomAppBarState extends State<CustomAppBar> {
+  String uid;
+  String _dpurl, chatbadges;
+
+  final _dpDefault =
+      "https://firebasestorage.googleapis.com/v0/b/lendbook-5b2b7.appspot.com/o/profilePics%2Fcat-icon.png?alt=media&token=98ddcd8e-a584-4488-b115-32c2b0ac39e1";
+
+  Future<void> _getUID() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      uid = _prefs.get("uid");
+    });
+  }
+
+  Future<void> _getUserData() async {
+    Firestore _db = Firestore.instance;
+    _db.collection("userDetails").document(uid).get().then((value) {
+      setState(() {
+        _dpurl = value.data['dpurl'];
+      });
+    });
+  }
+
+  Future<void> _getInboxcount() async {
+    Firestore _db = Firestore.instance;
+    _db
+        .collection('userDetails')
+        .document(uid)
+        .collection('chat-requests')
+        .getDocuments()
+        .then((value) {
+      setState(() {
+        chatbadges = value.documents.length.toString();
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getUID().then((value) {
+      _getUserData();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (variant == "no-avatar") {
+    if (widget.variant == "no-avatar") {
       return Container(
           child: Row(
         children: <Widget>[
@@ -36,7 +86,7 @@ class CustomAppBar extends StatelessWidget {
             margin: EdgeInsets.only(top: 40, bottom: 0),
             padding: EdgeInsets.all(10),
             child: Text(
-              this.title,
+              this.widget.title,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
@@ -45,7 +95,7 @@ class CustomAppBar extends StatelessWidget {
           ),
         ],
       ));
-    } else if (variant == "search") {
+    } else if (widget.variant == "search") {
       return Container(
           child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -63,15 +113,15 @@ class CustomAppBar extends StatelessWidget {
                         CupertinoPageRoute(builder: (context) => DashBoard()));
                   },
                   child: CircleAvatar(
-                    backgroundImage:
-                        NetworkImage(dpurl == null ? _dpDefault : dpurl),
+                    backgroundImage: CachedNetworkImageProvider(
+                        _dpurl == null ? _dpDefault : _dpurl),
                   ),
                 ),
                 SizedBox(
                   width: 20,
                 ),
                 Text(
-                  this.title,
+                  this.widget.title,
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ],
@@ -84,6 +134,54 @@ class CustomAppBar extends StatelessWidget {
                   onPressed: () {
                     Navigator.pushNamed(context, "/search");
                   }))
+        ],
+      ));
+    } else if (widget.variant == "search,msgs") {
+      return Container(
+          child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(top: 40, bottom: 0, left: 10),
+            padding: EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        CupertinoPageRoute(builder: (context) => DashBoard()));
+                  },
+                  child: CircleAvatar(
+                    backgroundImage: CachedNetworkImageProvider(
+                        _dpurl == null ? _dpDefault : _dpurl),
+                  ),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  this.widget.title,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          Container(
+              margin: EdgeInsets.only(top: 40, bottom: 0, left: 100),
+              child: IconButton(
+                  icon: FaIcon(FontAwesomeIcons.search),
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/search");
+                  })),
+          Container(
+              margin: EdgeInsets.only(top: 40, bottom: 0, right: 10, left: 0),
+              child: Badge(
+                badgeContent: Text(chatbadges == null ? '0' : chatbadges),
+                child: IconButton(
+                    icon: FaIcon(FontAwesomeIcons.inbox), onPressed: null),
+              ))
         ],
       ));
     } else {
@@ -103,8 +201,8 @@ class CustomAppBar extends StatelessWidget {
                       CupertinoPageRoute(builder: (context) => DashBoard()));
                 },
                 child: CircleAvatar(
-                  backgroundImage:
-                      NetworkImage(dpurl == null ? _dpDefault : dpurl),
+                  backgroundImage: CachedNetworkImageProvider(
+                      _dpurl == null ? _dpDefault : _dpurl),
                 ),
               )),
           SizedBox(
@@ -114,7 +212,7 @@ class CustomAppBar extends StatelessWidget {
             margin: EdgeInsets.only(top: 40, bottom: 0),
             padding: EdgeInsets.all(10),
             child: Text(
-              this.title,
+              this.widget.title,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),

@@ -69,7 +69,7 @@ class _HomeState extends State<Home> {
               CustomAppBar(
                 title: "Home",
                 dpurl: _dpurl,
-                variant: "search",
+                variant: "search,msgs",
               ),
               SizedBox(
                 height: 10,
@@ -139,6 +139,9 @@ class _HomeState extends State<Home> {
                                 imgurl: document['bookimage'],
                                 bookname: document['bookname'],
                                 bookauthor: document['bookauthor'],
+                                donoruid: document['bookdonoruid'],
+                                donorname: document['bookdonor'],
+                                donorimg: document['bookdonorprofile'],
                                 booksubject: document['booksubject']);
                           }).toList(),
                         );

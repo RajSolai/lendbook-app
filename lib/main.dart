@@ -6,6 +6,7 @@ import 'package:lendbook/pages/splash.dart';
 import 'package:lendbook/pages/login.dart';
 import 'package:lendbook/pages/register.dart';
 import 'package:lendbook/pages/home.dart';
+import 'package:lendbook/services/chat/messages.dart';
 
 main(List<String> args) {
   runApp(App());
@@ -23,7 +24,8 @@ class App extends StatelessWidget {
         "/home": (context) => Home(),
         "/addbook": (context) => AddBook(),
         "/posts": (context) => MyPosts(),
-        "/search": (context) => SearchPage()
+        "/search": (context) => SearchPage(),
+        "/allmessages": (context) => Messages()
       },
       theme: ThemeData(
           fontFamily: "Inter",

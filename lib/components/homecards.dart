@@ -1,20 +1,37 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lendbook/services/post/postdetails.dart';
 
 class HomeCards extends StatelessWidget {
-  final String imgurl, bookname, bookauthor, booksubject;
+  final String imgurl,
+      bookname,
+      bookauthor,
+      booksubject,
+      donoruid,
+      donorimg,
+      donorname;
   HomeCards(
       {@required this.imgurl,
       @required this.bookname,
       @required this.bookauthor,
-      @required this.booksubject});
+      @required this.booksubject,
+      this.donoruid,
+      this.donorname,
+      this.donorimg});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () {
-          print("hello");
+          Navigator.push(context, CupertinoPageRoute(builder: (context) {
+            return PostDetails(
+                bookimgurl: imgurl,
+                donorname: donorname,
+                donoruid: donoruid,
+                bookname: bookname,
+                donorimage: donorimg);
+          }));
         },
         child: Container(
           height: 200,
