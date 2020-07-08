@@ -31,25 +31,26 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   Future<void> _getUserData() async {
     Firestore _db = Firestore.instance;
-    _db.collection("userDetails").document(uid).get().then((value) {
+    await _db.collection("userDetails").document(uid).get().then((value) {
       setState(() {
         _dpurl = value.data['dpurl'];
       });
     });
   }
 
-  Future<void> _getInboxcount() async {
+  String _getInboxcount() {
     Firestore _db = Firestore.instance;
     _db
         .collection('userDetails')
         .document(uid)
-        .collection('chat-requests')
+        .collection('chat-request')
         .getDocuments()
         .then((value) {
       setState(() {
-        chatbadges = value.documents.length.toString();
+        chatbadges = value.documentChanges.toList().length.toString();
       });
     });
+    return chatbadges;
   }
 
   @override
@@ -57,6 +58,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     super.initState();
     _getUID().then((value) {
       _getUserData();
+      _getInboxcount();
     });
   }
 
@@ -169,18 +171,27 @@ class _CustomAppBarState extends State<CustomAppBar> {
             ),
           ),
           Container(
-              margin: EdgeInsets.only(top: 40, bottom: 0, left: 100),
+              margin: EdgeInsets.only(top: 40, bottom: 0, left: 90),
               child: IconButton(
                   icon: FaIcon(FontAwesomeIcons.search),
                   onPressed: () {
                     Navigator.pushNamed(context, "/search");
                   })),
           Container(
-              margin: EdgeInsets.only(top: 40, bottom: 0, right: 10, left: 0),
+              margin: EdgeInsets.only(top: 40, bottom: 0, right: 25),
               child: Badge(
-                badgeContent: Text(chatbadges == null ? '0' : chatbadges),
+                elevation: 5,
+                toAnimate: true,
+                badgeContent: Text(
+                  _getInboxcount() == null ? '0' : _getInboxcount(),
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w500),
+                ),
                 child: IconButton(
-                    icon: FaIcon(FontAwesomeIcons.inbox), onPressed: null),
+                    icon: FaIcon(FontAwesomeIcons.inbox),
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/allmessages");
+                    }),
               ))
         ],
       ));

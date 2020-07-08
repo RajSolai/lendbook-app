@@ -14,9 +14,29 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   String _searchParam;
   String _searchSubject;
-  String _userGrade;
+  String _userGrade = "";
   String _uid;
   List _searchRecords;
+  bool _gradeSwitch = false;
+
+  List<Map> _schoolData = [
+    {"title": "Physics", "icon": FontAwesomeIcons.atom},
+    {"title": "Chemistry", "icon": FontAwesomeIcons.flask},
+    {"title": "ComputerScience", "icon": FontAwesomeIcons.laptop},
+    {"title": "Maths", "icon": FontAwesomeIcons.divide},
+    {"title": "Language", "icon": FontAwesomeIcons.language},
+  ];
+
+  List<Map> _universityData = [
+    {"title": "Physics", "icon": FontAwesomeIcons.atom},
+    {"title": "Chemistry", "icon": FontAwesomeIcons.flask},
+    {"title": "ComputerScience", "icon": FontAwesomeIcons.laptop},
+    {"title": "Maths", "icon": FontAwesomeIcons.divide},
+    {"title": "Medical", "icon": FontAwesomeIcons.briefcaseMedical},
+    {"title": "Language", "icon": FontAwesomeIcons.language},
+    {"title": "Mechanical", "icon": FontAwesomeIcons.cogs},
+    {"title": "Electronics And Electrical", "icon": FontAwesomeIcons.bolt},
+  ];
 
   Future<void> _getUID() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
@@ -27,19 +47,30 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<void> _getUserData() async {
     Firestore _db = Firestore.instance;
-    _db.collection("userDetails").document(_uid).get().then((value) {
+    await _db.collection("userDetails").document(_uid).get().then((value) {
       setState(() {
-        _userGrade = value.data['grade'];
+        _userGrade = value.data['grade'].toString().toLowerCase();
       });
     });
+  }
+
+  String _grade() {
+    if (_gradeSwitch == true && _userGrade == "school") {
+      return "college";
+    } else if (_gradeSwitch == true && _userGrade == "college") {
+      return "school";
+    } else {
+      return _userGrade;
+    }
   }
 
   Future<void> _search() async {
     Firestore _firestore = Firestore.instance;
     await _firestore
         .collection("BookPosts")
-        .document(_userGrade.toLowerCase())
-        .collection(_searchSubject.toUpperCase())
+        .document(_grade())
+        .collection(
+            _searchSubject.toUpperCase().replaceAll(new RegExp(r"\s+"), ""))
         .where("bookname", isGreaterThanOrEqualTo: _searchParam.toUpperCase())
         .getDocuments()
         .then((value) {
@@ -78,29 +109,152 @@ class _SearchPageState extends State<SearchPage> {
                     children: <Widget>[
                       TextField(
                           decoration: InputDecoration(
+                              filled: true,
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              hintText: "Enter Subject"),
-                          onChanged: (value) {
-                            setState(() {
-                              _searchSubject = value;
-                            });
-                          }),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      TextField(
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              hintText: "Search By Book Name"),
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              contentPadding: EdgeInsets.only(
+                                  left: 15, bottom: 11, top: 11, right: 15),
+                              fillColor: Color(0xFFdbd7d2),
+                              hintText: "Enter Book Name"),
                           onChanged: (value) {
                             setState(() {
                               _searchParam = value;
                             });
                           }),
                       SizedBox(
-                        height: 15,
+                        height: 10,
+                      ),
+                      Container(
+                        child: ListTile(
+                          title: Text(_userGrade == "school"
+                              ? "Looking For College Books?"
+                              : "Looking For School Books?"),
+                          trailing: CupertinoSwitch(
+                              value: _gradeSwitch,
+                              onChanged: (bool val) {
+                                setState(() {
+                                  _gradeSwitch = val;
+                                });
+                              }),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(5),
+                        height: 70,
+                        child: IndexedStack(
+                          index: _grade() == "school" ? 0 : 1,
+                          children: <Widget>[
+                            Container(
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                physics: AlwaysScrollableScrollPhysics(),
+                                itemCount: _schoolData.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return InkWell(
+                                    onTap: () {
+                                      print(_schoolData[index]['title']);
+                                      setState(() {
+                                        _searchSubject =
+                                            _schoolData[index]['title'];
+                                      });
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.all(5),
+                                      padding: EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                          color: Color(0xFF9852f9),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(8))),
+                                      //width: 120,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          FaIcon(
+                                            _schoolData[index]['icon'],
+                                            color: Colors.white,
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            _schoolData[index]['title'],
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.white),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            Container(
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                physics: AlwaysScrollableScrollPhysics(),
+                                itemCount: _universityData.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return InkWell(
+                                    onTap: () {
+                                      print(_universityData[index]['title']);
+                                      setState(() {
+                                        _searchSubject =
+                                            _universityData[index]['title'];
+                                      });
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.all(5),
+                                      padding: EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                          color: Color(0xFF9852f9),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(8))),
+                                      //width: 120,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          FaIcon(
+                                            _universityData[index]['icon'],
+                                            color: Colors.white,
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            _universityData[index]['title'],
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.white),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(_grade()),
+                          Text("  >  "),
+                          Text(_searchSubject == null ? "" : _searchSubject),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
                       ),
                       ButtonTheme(
                           minWidth: 200,
@@ -125,18 +279,21 @@ class _SearchPageState extends State<SearchPage> {
                               }))
                     ],
                   )),
-              // * Here goes the stream Builder
               Expanded(
                 child: ListView.builder(
                     padding: EdgeInsets.all(10),
                     itemCount:
                         _searchRecords == null ? 0 : _searchRecords.length,
                     itemBuilder: (BuildContext context, int index) {
+                      print(_searchRecords[index]['donorname']);
                       return HomeCards(
-                          imgurl: _searchRecords[index]['bookimage'],
-                          bookname: _searchRecords[index]['bookname'],
-                          bookauthor: _searchRecords[index]['bookauthor'],
-                          booksubject: _searchRecords[index]['booksubject']);
+                        imgurl: _searchRecords[index]['bookimage'],
+                        bookname: _searchRecords[index]['bookname'],
+                        bookauthor: _searchRecords[index]['bookauthor'],
+                        booksubject: _searchRecords[index]['booksubject'],
+                        bookcondition: _searchRecords[index]['bookcondition'],
+                        donorname: _searchRecords[index]['bookdonor'],
+                      );
                     }),
               ),
             ],

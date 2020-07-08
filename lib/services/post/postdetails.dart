@@ -12,6 +12,7 @@ class PostDetails extends StatefulWidget {
       donorimage,
       bookname,
       bookimgurl,
+      booksubject,
       bookauthor,
       bookdonorimgurl,
       bookcondition;
@@ -25,7 +26,8 @@ class PostDetails extends StatefulWidget {
       this.bookdonorimgurl,
       this.bookcondition,
       this.bookname,
-      this.donorimage});
+      this.donorimage,
+      this.booksubject});
 
   @override
   _PostDetailsState createState() => _PostDetailsState();
@@ -39,23 +41,73 @@ class _PostDetailsState extends State<PostDetails> {
         children: <Widget>[
           CustomAppBar(
             title: "Book Details",
+            variant: "no-avatar",
           ),
           SingleChildScrollView(
+            padding: EdgeInsets.all(8),
             child: Column(
               children: <Widget>[
+                SizedBox(
+                  height: 20,
+                ),
                 Container(
-                    height: 200,
-                    child:
-                        CachedNetworkImage(imageUrl: this.widget.bookimgurl)),
-                Container(
-                    child: Column(
-                  children: <Widget>[Text(this.widget.bookname)],
+                    child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  child: CachedNetworkImage(
+                    imageUrl: this.widget.bookimgurl,
+                    height: 300,
+                    width: 300,
+                  ),
                 )),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      children: <Widget>[
+                        Text(this.widget.bookname,
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        ListTile(
+                          title: Text("Book Author",
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold)),
+                          trailing: Text(widget.bookauthor,
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w200)),
+                        ),
+                        ListTile(
+                          title: Text("Book Subject",
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold)),
+                          trailing: Text(widget.booksubject,
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w200)),
+                        ),
+                        ListTile(
+                          title: Text("Book Condition",
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold)),
+                          trailing: Text(widget.bookcondition,
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w200)),
+                        ),
+                        ListTile(
+                          title: Text("Donated By",
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold)),
+                          trailing: Text(widget.donorname,
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w200)),
+                        )
+                      ],
+                    )),
                 CupertinoButton(
                     color: Color(0xFFF2C94C),
                     borderRadius: BorderRadius.circular(10),
                     child: Text(
-                      "Chat with donor",
+                      "Chat with" + " " + widget.donorname,
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.w500),
                     ),

@@ -1,18 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lendbook/services/chat/messages.dart';
 import 'package:lendbook/services/chat/sendmessage.dart';
 
 class MsgReq extends StatelessWidget {
-  final name, image, chatdoc, chatcoll, sendername;
+  final name, image, chatdoc, chatcoll, sendername, senderuid;
   MsgReq(
       {Key key,
       this.name,
       this.image,
       this.chatdoc,
       this.chatcoll,
-      this.sendername});
+      this.sendername,
+      this.senderuid});
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +27,7 @@ class MsgReq extends StatelessWidget {
                 chatdoc: chatdoc,
                 chatcoll: chatcoll,
                 sendername: sendername,
+                senderuid: senderuid,
               );
             }));
           },

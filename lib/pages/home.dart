@@ -24,12 +24,11 @@ class _HomeState extends State<Home> {
     });
   }
 
-  // TODO : Complete the Algorithm !
   Future<void> _displayAlgorithm() async {
     /* THis is the Main algorithm of displaying the books needed for the
       users */
     Firestore _db = Firestore.instance;
-    _db.collection("userDetails").document(_uid).get().then((value) {
+    await _db.collection("userDetails").document(_uid).get().then((value) {
       setState(() {
         _userFavSub = value.data['userinterest'];
         _userGrade = value.data['grade'];
@@ -78,7 +77,7 @@ class _HomeState extends State<Home> {
                 padding: EdgeInsets.all(10),
                 child: Text(
                   "Books Based on your Favorite Subject !",
-                  style: TextStyle(fontWeight: FontWeight.w200, fontSize: 18),
+                  style: TextStyle(fontWeight: FontWeight.w200, fontSize: 16),
                 ),
               ),
               // * Here goes the stream Builder
@@ -95,54 +94,25 @@ class _HomeState extends State<Home> {
                         .snapshots(),
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasError) {
-                        print(snapshot.error);
-                        return Text("Errot in Snapshot");
-                      } else if (snapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return SingleChildScrollView(
-                            child: Container(
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                height: 100,
-                                width: 100,
-                                child: Image.asset(
-                                    "./assets/icons/loading-logo.png"),
-                              ),
-                              Center(
-                                child: Text(
-                                  "Fetching your Favorites!",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              Center(
-                                child: Text(
-                                  "This might take a second",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontStyle: FontStyle.italic),
-                                ),
-                              )
-                            ],
-                          ),
-                        ));
+                      if (!snapshot.hasData) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
                       } else {
                         return ListView(
                           padding: EdgeInsets.all(10),
                           children: snapshot.data.documents
                               .map((DocumentSnapshot document) {
                             return HomeCards(
-                                imgurl: document['bookimage'],
-                                bookname: document['bookname'],
-                                bookauthor: document['bookauthor'],
-                                donoruid: document['bookdonoruid'],
-                                donorname: document['bookdonor'],
-                                donorimg: document['bookdonorprofile'],
-                                booksubject: document['booksubject']);
+                              imgurl: document['bookimage'],
+                              bookname: document['bookname'],
+                              bookauthor: document['bookauthor'],
+                              donoruid: document['bookdonoruid'],
+                              donorname: document['bookdonor'],
+                              donorimg: document['bookdonorprofile'],
+                              booksubject: document['booksubject'],
+                              bookcondition: document['bookcondition'],
+                            );
                           }).toList(),
                         );
                       }

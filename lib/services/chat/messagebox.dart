@@ -27,29 +27,36 @@ class _MessageBoxState extends State<MessageBox> {
 
   @override
   Widget build(BuildContext context) {
-    if (uid != widget.peeruid) {
-      return Container(
-        height: 50,
-        child: Card(
-          color: Color(0xFFF2C94C),
-          elevation: 10,
-          child: Text(
-            widget.message,
-            textAlign: TextAlign.start,
+    if (uid == widget.peeruid) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              color: Color(0xFFF2C94C), //0xFF9852f9
+            ),
+            padding: EdgeInsets.all(10),
+            margin: EdgeInsets.all(5),
+            child: Text(widget.message, style: TextStyle(fontSize: 14)),
           ),
-        ),
+        ],
       );
     } else {
-      return Container(
-        height: 50,
-        child: Card(
-          color: Color(0xFFcfe5cf),
-          elevation: 10,
-          child: Text(
-            widget.message,
-            textAlign: TextAlign.start,
-          ),
-        ),
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              color: Color(0xFF9852f9),
+            ),
+            padding: EdgeInsets.all(10),
+            margin: EdgeInsets.all(5),
+            child: Text(widget.message,
+                style: TextStyle(fontSize: 14, color: Colors.white)),
+          )
+        ],
       );
     }
   }

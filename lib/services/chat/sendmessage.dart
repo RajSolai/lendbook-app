@@ -8,7 +8,14 @@ import 'package:lendbook/services/chat/messagebox.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SendMessage extends StatefulWidget {
-  final donoruid, donorname, donorimg, variant, chatdoc, chatcoll, sendername;
+  final donoruid,
+      donorname,
+      donorimg,
+      variant,
+      chatdoc,
+      chatcoll,
+      senderuid,
+      sendername;
   SendMessage({
     this.donoruid,
     this.donorname,
@@ -17,6 +24,7 @@ class SendMessage extends StatefulWidget {
     this.chatdoc,
     this.chatcoll,
     this.sendername,
+    this.senderuid,
   });
 
   @override
@@ -24,7 +32,10 @@ class SendMessage extends StatefulWidget {
 }
 
 class _SendMessageState extends State<SendMessage> {
-  String uid = "";
+  ScrollController _scrollController = new ScrollController();
+  TextEditingController _messageCtrl = new TextEditingController();
+
+  String uid, _username, _userdp;
   String _message;
 
   Future<void> _getUID() async {
@@ -34,7 +45,18 @@ class _SendMessageState extends State<SendMessage> {
     });
   }
 
+  Future<void> _getUserData() async {
+    Firestore _db = Firestore.instance;
+    _db.collection("userDetails").document(uid).get().then((value) {
+      setState(() {
+        _username = value.data['displayname'];
+        _userdp = value.data['dpurl'];
+      });
+    });
+  }
+
   Future<void> _sendMessage() async {
+    _messageCtrl.clear();
     DateTime _date = DateTime.now();
     final _db = Firestore.instance;
     var data = {
@@ -46,11 +68,11 @@ class _SendMessageState extends State<SendMessage> {
     var chatRequest = {
       'chatdoc': chatID,
       'chatcoll': chatID,
-      'senderimg': this.widget.donorimg,
-      'sendername': this.widget.donorname,
-      'senderuid': this.widget.donoruid
+      'senderimg': _userdp,
+      'sendername': _username,
+      'senderuid': uid
     };
-    _db
+    await _db
         .collection("chats")
         .document(chatID)
         .collection(chatID)
@@ -62,11 +84,15 @@ class _SendMessageState extends State<SendMessage> {
           .document(this.widget.donoruid)
           .collection("chat-request")
           .document(chatID)
-          .setData(chatRequest);
+          .setData(chatRequest)
+          .then((value) {
+        _messageCtrl.clear();
+      });
     });
   }
 
   Future<void> _sendRes() async {
+    _messageCtrl.clear();
     DateTime _date = DateTime.now();
     final _db = Firestore.instance;
     var data = {
@@ -74,25 +100,44 @@ class _SendMessageState extends State<SendMessage> {
       'timestamp': _date.toString(),
       'peer-send': uid,
     };
-    _db
+    var chatRequest = {
+      'chatdoc': this.widget.chatdoc,
+      'chatcoll': this.widget.chatdoc,
+      'senderimg': _userdp,
+      'sendername': _username,
+      'senderuid': uid
+    };
+    await _db
         .collection("chats")
         .document(this.widget.chatdoc)
         .collection(this.widget.chatcoll)
         .document(_date.toString())
-        .setData(data);
+        .setData(data)
+        .then((value) {
+      _db
+          .collection("userDetails")
+          .document(widget.senderuid)
+          .collection("chat-request")
+          .document(this.widget.chatcoll) //* same as chatID
+          .setData(chatRequest);
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    _getUID();
-    print(this.widget.donoruid);
+    _getUID().then((value) {
+      _getUserData();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    print(this.widget.chatcoll + "  " + this.widget.chatdoc);
     if (this.widget.variant == "rqmsg") {
+      Timer(Duration(milliseconds: 300), () {
+        _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+      });
       return Scaffold(
         body: Column(
           children: <Widget>[
@@ -118,24 +163,25 @@ class _SendMessageState extends State<SendMessage> {
                       );
                     } else {
                       return ListView(
+                        controller: _scrollController,
                         padding: EdgeInsets.all(10),
                         children: snapshot.data.documents
                             .map((DocumentSnapshot document) {
                           return MessageBox(
-                            message: document['message'],
-                            peeruid: uid,
-                          );
+                              message: document['message'],
+                              peeruid: document['peer-send']);
                         }).toList(),
                       );
                     }
                   }),
             )),
             Container(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(10),
                 child: Row(
                   children: <Widget>[
                     Flexible(
                       child: TextField(
+                          controller: _messageCtrl,
                           decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10)),
@@ -161,6 +207,10 @@ class _SendMessageState extends State<SendMessage> {
         ),
       );
     } else {
+      Timer(Duration(milliseconds: 300), () {
+        _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+      });
       return Scaffold(
         body: Column(
           children: <Widget>[
@@ -186,11 +236,13 @@ class _SendMessageState extends State<SendMessage> {
                       );
                     } else {
                       return ListView(
+                        controller: _scrollController,
                         padding: EdgeInsets.all(10),
                         children: snapshot.data.documents
                             .map((DocumentSnapshot document) {
                           return MessageBox(
                             message: document['message'],
+                            peeruid: document['peer-send'],
                           );
                         }).toList(),
                       );
@@ -203,6 +255,7 @@ class _SendMessageState extends State<SendMessage> {
                   children: <Widget>[
                     Flexible(
                       child: TextField(
+                          controller: _messageCtrl,
                           decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10)),

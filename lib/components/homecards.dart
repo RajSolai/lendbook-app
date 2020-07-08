@@ -8,6 +8,7 @@ class HomeCards extends StatelessWidget {
       bookname,
       bookauthor,
       booksubject,
+      bookcondition,
       donoruid,
       donorimg,
       donorname;
@@ -17,8 +18,9 @@ class HomeCards extends StatelessWidget {
       @required this.bookauthor,
       @required this.booksubject,
       this.donoruid,
-      this.donorname,
-      this.donorimg});
+      @required this.donorname,
+      this.donorimg,
+      @required this.bookcondition});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,9 @@ class HomeCards extends StatelessWidget {
         onTap: () {
           Navigator.push(context, CupertinoPageRoute(builder: (context) {
             return PostDetails(
+                bookauthor: bookauthor,
+                bookcondition: bookcondition,
+                booksubject: booksubject,
                 bookimgurl: imgurl,
                 donorname: donorname,
                 donoruid: donoruid,
@@ -34,53 +39,58 @@ class HomeCards extends StatelessWidget {
           }));
         },
         child: Container(
+          padding: EdgeInsets.all(0),
           height: 200,
+          margin: EdgeInsets.all(2),
           child: Card(
-            elevation: 6.0,
+            elevation: 5.0,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                borderRadius: BorderRadius.all(Radius.circular(8.0))),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
-                  padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text(
-                        bookname,
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                        overflow: TextOverflow.ellipsis,
+                      Flexible(
+                        child: Text(
+                          bookname.length <= 11
+                              ? bookname
+                              : bookname.substring(0, 11) + "..",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       SizedBox(height: 10),
                       Text(
                         "By : " + bookauthor,
                         style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w200),
+                            fontSize: 12, fontWeight: FontWeight.w200),
                       ),
                       SizedBox(height: 10),
                       Text(
                         "Subject : " + booksubject,
                         style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w200),
+                            fontSize: 12, fontWeight: FontWeight.w200),
                       )
                     ],
                   ),
                 ),
-                SizedBox(
-                  width: 20,
-                ),
-                Container(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    child: CachedNetworkImage(
-                      height: 170,
-                      imageUrl: imgurl,
-                      placeholder: (context, url) => Text("Loading Image"),
-                    ),
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(8.0),
+                      bottomRight: Radius.circular(8.0)),
+                  child: CachedNetworkImage(
+                    //height: 190,
+                    // width: 190,
+                    imageUrl: imgurl,
+                    placeholder: (context, url) => Text("Loading Image"),
                   ),
-                )
+                ),
               ],
             ),
           ),

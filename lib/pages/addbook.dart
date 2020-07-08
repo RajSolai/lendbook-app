@@ -23,16 +23,23 @@ class _AddBookState extends State<AddBook> {
   File _bookImage;
   String _bookName;
   String _bookAuthor;
-  String _bookCondition;
+  String _bookCondition = "New Book";
   String _donorPickupLocation;
   String _uid;
-  String _bookSchoolSubject;
-  String _bookCollegeSubject;
+  String _bookSchoolSubject = "Physics";
+  String _bookCollegeSubject = "Physics";
   Map _userDetails;
   String _bookSubject;
   // TODO : Change to another image
   String _dpDefault =
       "https://firebasestorage.googleapis.com/v0/b/lendbook-5b2b7.appspot.com/o/profilePics%2Fcat-icon.png?alt=media&token=98ddcd8e-a584-4488-b115-32c2b0ac39e1";
+
+  TextEditingController _booknamectrl = new TextEditingController();
+  TextEditingController _bookauthctrl = new TextEditingController();
+  TextEditingController _bookpickctrl = new TextEditingController();
+  FocusNode _booknamefocus = new FocusNode();
+  FocusNode _bookauthfocus = new FocusNode();
+  FocusNode _bookpickfocus = new FocusNode();
 
   List<String> _bookConditions = [
     "New Book",
@@ -40,8 +47,6 @@ class _AddBookState extends State<AddBook> {
     "Fair One",
     "Not Good"
   ];
-
-  List<String> _bookGrades = ["School", "College"];
 
   List<String> _bookSchoolSubjects = [
     "Physics",
@@ -62,29 +67,74 @@ class _AddBookState extends State<AddBook> {
     "Electronics And Electrical"
   ];
 
-  Future<void> _basicAlerts(String title, String content) async {
-    showDialog(
+  Future<void> _customProgressDialog() async {
+    await showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20.0))),
-            title: Text(title),
-            content: Text(content),
-            actions: <Widget>[
-              CupertinoButton(
-                  child: Text("Okay"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  }),
-              CupertinoButton(
-                  child: Text("View Donations"),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed("/posts");
-                  }),
-            ],
+                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+            content: Row(
+              children: <Widget>[
+                CircularProgressIndicator(),
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  "Posting New Donation !",
+                  textAlign: TextAlign.center,
+                )
+              ],
+            ),
           );
         });
+  }
+
+  Future<void> _basicAlerts(
+      String title, String content, String variant) async {
+    if (variant == "error") {
+      await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              title: Text(title),
+              content: Text(content),
+              actions: <Widget>[
+                CupertinoButton(
+                    child: Text("Okay"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    }),
+              ],
+            );
+          });
+    } else {
+      await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              title: Text(title),
+              content: Text(content),
+              actions: <Widget>[
+                CupertinoButton(
+                    child: Text("Okay"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    }),
+                CupertinoButton(
+                    child: Text("View Donations"),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed("/posts");
+                    }),
+              ],
+            );
+          });
+    }
   }
 
   Future<void> getUserData() async {
@@ -94,6 +144,12 @@ class _AddBookState extends State<AddBook> {
         _userDetails = value.data;
       });
     });
+  }
+
+  void _fieldFocusChange(
+      BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
+    currentFocus.unfocus();
+    FocusScope.of(context).requestFocus(nextFocus);
   }
 
   Future<void> _getUID() async {
@@ -149,20 +205,21 @@ class _AddBookState extends State<AddBook> {
     });
   }
 
-  void _checkAndaddBook() {
+  void _checkAndaddBook(BuildContext _context) {
     if (_bookName != null &&
         _bookAuthor != null &&
         _donorPickupLocation != null &&
         _bookCondition != null &&
         _bookImageUrl != null) {
-      _addBook();
+      _addBook(_context);
     } else {
       _basicAlerts("Values Not Filled 😕",
-          "Hey! , It Seems you missed some fields without filling");
+          "Hey! , It Seems you missed some fields without filling", "error");
     }
   }
 
-  Future<void> _addBook() async {
+  Future<void> _addBook(BuildContext _context) async {
+    _customProgressDialog();
     Firestore _db = Firestore.instance;
     DateTime _date = DateTime.now();
     String _bookId = randomAlphaNumeric(10);
@@ -175,7 +232,7 @@ class _AddBookState extends State<AddBook> {
       'bookauthor': _bookAuthor,
       'bookimage': _bookImageUrl,
       'bookcondition': _bookCondition,
-      'booksubject': _bookSubject,
+      'booksubject': _bookSubject.replaceAll(new RegExp(r"\s+"), ""),
       'bookpickuplocation': _donorPickupLocation,
       'bookdonoruid': _uid,
       'bookdonorprofile': _userDetails['dpurl'],
@@ -197,7 +254,9 @@ class _AddBookState extends State<AddBook> {
           .document(_bookId)
           .setData(_bookData)
           .then((value) {
-        _basicAlerts("Added Book 👍", "Book Successfully Posted for Donation");
+        Navigator.of(context, rootNavigator: true).pop('dialog');
+        _basicAlerts("Added Book 👍", "Book Successfully Posted for Donation",
+            "success");
       });
     }).catchError((onError) {
       print(onError);
@@ -242,15 +301,23 @@ class _AddBookState extends State<AddBook> {
                     height: 10,
                   ),
                   TextField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          hintText: "eg: Operating Systems"),
-                      onChanged: (value) {
-                        setState(() {
-                          _bookName = value;
-                        });
-                      }),
+                    controller: _booknamectrl,
+                    focusNode: _booknamefocus,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        hintText: "eg: Operating Systems"),
+                    textInputAction: TextInputAction.next,
+                    onChanged: (value) {
+                      setState(() {
+                        _bookName = value;
+                      });
+                    },
+                    onSubmitted: (term) {
+                      _fieldFocusChange(
+                          context, _booknamefocus, _bookauthfocus);
+                    },
+                  ),
                   SizedBox(
                     height: 20,
                   ),
@@ -263,15 +330,23 @@ class _AddBookState extends State<AddBook> {
                     height: 10,
                   ),
                   TextField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          hintText: "eg: DM Dhamdhere"),
-                      onChanged: (value) {
-                        setState(() {
-                          _bookAuthor = value;
-                        });
-                      }),
+                    controller: _bookauthctrl,
+                    focusNode: _bookauthfocus,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        hintText: "eg: DM Dhamdhere"),
+                    onChanged: (value) {
+                      setState(() {
+                        _bookAuthor = value;
+                      });
+                    },
+                    onSubmitted: (term) {
+                      _fieldFocusChange(
+                          context, _bookauthfocus, _bookpickfocus);
+                    },
+                  ),
                   SizedBox(
                     height: 20,
                   ),
@@ -284,16 +359,23 @@ class _AddBookState extends State<AddBook> {
                     height: 10,
                   ),
                   TextField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          hintText:
-                              "eg : Near Phonix Mall , Velachery , Chennai"),
-                      onChanged: (value) {
-                        setState(() {
-                          _donorPickupLocation = value;
-                        });
-                      }),
+                    controller: _bookpickctrl,
+                    focusNode: _bookpickfocus,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        hintText:
+                            "eg : Near Phonix Mall , Velachery , Chennai"),
+                    onChanged: (value) {
+                      setState(() {
+                        _donorPickupLocation = value;
+                      });
+                    },
+                    onSubmitted: (value) {
+                      FocusScope.of(context).requestFocus(FocusNode());
+                    },
+                  ),
                   SizedBox(
                     height: 20,
                   ),
@@ -472,7 +554,8 @@ class _AddBookState extends State<AddBook> {
                               color: Colors.black, fontWeight: FontWeight.w500),
                         ),
                         onPressed: () {
-                          _checkAndaddBook();
+                          _checkAndaddBook(context);
+                          //_customProgressDialog();
                         }),
                   ),
                   SizedBox(

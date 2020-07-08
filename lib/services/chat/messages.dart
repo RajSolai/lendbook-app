@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lendbook/components/CustomAppBar.dart';
 import 'package:lendbook/components/messageRq.dart';
-import 'package:lendbook/services/chat/messagebox.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Messages extends StatefulWidget {
@@ -62,6 +61,7 @@ class _MessagesState extends State<Messages> {
                             image: document['senderimg'],
                             name: document['sendername'],
                             chatdoc: document['chatdoc'],
+                            senderuid: document['senderuid'],
                             chatcoll: document['chatcoll'],
                             sendername: document['sendername']);
                       }).toList(),

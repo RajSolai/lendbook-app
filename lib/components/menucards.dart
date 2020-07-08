@@ -10,46 +10,42 @@ class MenuCards extends StatefulWidget {
 }
 
 class _MenuCardsState extends State<MenuCards> {
+  Color _normalcolor = new Color(0xFF9852f9);
+  Color _color;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _color = _normalcolor;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-        margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
-        child: GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(context, "/login");
-          },
-          child: Container(
-            padding: EdgeInsets.only(top: 70),
-            height: 180,
-            width: 180,
-            child: Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  FaIcon(this.widget.icon, size: 25),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    this.widget.name,
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  )
-                ],
-              ),
+    return InkWell(
+      child: Container(
+        margin: EdgeInsets.all(5),
+        decoration: BoxDecoration(
+            color: _color, borderRadius: BorderRadius.all(Radius.circular(8))),
+        width: 120,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            FaIcon(
+              widget.icon,
+              color: Colors.white,
             ),
-            decoration: BoxDecoration(
-                color: Color(0xFFF2C94C),
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromRGBO(0, 0, 0, 0.1),
-                    spreadRadius: 1.0,
-                    blurRadius: 5.0,
-                  ),
-                ]),
-          ),
-        ));
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              widget.name,
+              style: TextStyle(fontSize: 14, color: Colors.white),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
