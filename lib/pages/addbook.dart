@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lendbook/components/CustomAppBar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:random_string/random_string.dart';
 import 'package:toast/toast.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:geolocator/geolocator.dart';
 
 class AddBook extends StatefulWidget {
   @override
@@ -26,6 +28,8 @@ class _AddBookState extends State<AddBook> {
   String _bookCondition = "New Book";
   String _donorPickupLocation;
   String _uid;
+  String _pickupLat;
+  String _pickupLong;
   String _bookSchoolSubject = "Physics";
   String _bookCollegeSubject = "Physics";
   Map _userDetails;
@@ -159,8 +163,27 @@ class _AddBookState extends State<AddBook> {
     });
   }
 
+  Future<void> _getLocationViaGmaps() async {
+    await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((value) {
+      var coordinates = new Coordinates(value.latitude, value.longitude);
+      Geocoder.local.findAddressesFromCoordinates(coordinates).then((value) {
+        print(value.first.addressLine);
+        setState(() {
+          _donorPickupLocation = value.first.addressLine;
+        });
+      });
+      print(value.latitude.toString() + " " + value.longitude.toString());
+      setState(() {
+        _pickupLat = value.latitude.toString();
+        _pickupLong = value.longitude.toString();
+      });
+    });
+  }
+
   Future<void> _uploadBookImage() async {
-    // ! pickImage is considered to be Depreciated :-/
+    // ! pickImage is considered tos be Depreciated :-/
     // ignore: deprecated_member_use
     await ImagePicker.pickImage(
             source: ImageSource.gallery, maxHeight: 500, maxWidth: 500)
@@ -234,11 +257,13 @@ class _AddBookState extends State<AddBook> {
       'bookcondition': _bookCondition,
       'booksubject': _bookSubject.replaceAll(new RegExp(r"\s+"), ""),
       'bookpickuplocation': _donorPickupLocation,
+      'bookpickuplat': _pickupLat,
+      'bookpicklong': _pickupLong,
       'bookdonoruid': _uid,
       'bookdonorprofile': _userDetails['dpurl'],
       'bookdonor': _userDetails['displayname'],
       'bookdonorphone': _userDetails['phone'],
-      'bookdonorwa': _userDetails['waphone']
+      'bookdonorwa': _userDetails['waphone'],
     };
     await _db
         .collection("BookPosts")
@@ -375,6 +400,23 @@ class _AddBookState extends State<AddBook> {
                     onSubmitted: (value) {
                       FocusScope.of(context).requestFocus(FocusNode());
                     },
+                  ),
+                  Center(
+                      child: CupertinoButton(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Text(
+                            "Choose Current Location",
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          onPressed: () {
+                            _getLocationViaGmaps();
+                            //_customProgressDialog();
+                          })),
+                  Center(
+                    child: Text(
+                      _donorPickupLocation == null ? "" : _donorPickupLocation,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   SizedBox(
                     height: 20,

@@ -71,7 +71,7 @@ class _SearchPageState extends State<SearchPage> {
         .document(_grade())
         .collection(
             _searchSubject.toUpperCase().replaceAll(new RegExp(r"\s+"), ""))
-        .where("bookname", isGreaterThanOrEqualTo: _searchParam.toUpperCase())
+        .where("bookname", isLessThanOrEqualTo: _searchParam.toUpperCase())
         .getDocuments()
         .then((value) {
       setState(() {
@@ -104,42 +104,9 @@ class _SearchPageState extends State<SearchPage> {
                 height: 10,
               ),
               Container(
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(8),
                   child: Column(
                     children: <Widget>[
-                      TextField(
-                          decoration: InputDecoration(
-                              filled: true,
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              contentPadding: EdgeInsets.only(
-                                  left: 15, bottom: 11, top: 11, right: 15),
-                              fillColor: Color(0xFFdbd7d2),
-                              hintText: "Enter Book Name"),
-                          onChanged: (value) {
-                            setState(() {
-                              _searchParam = value;
-                            });
-                          }),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        child: ListTile(
-                          title: Text(_userGrade == "school"
-                              ? "Looking For College Books?"
-                              : "Looking For School Books?"),
-                          trailing: CupertinoSwitch(
-                              value: _gradeSwitch,
-                              onChanged: (bool val) {
-                                setState(() {
-                                  _gradeSwitch = val;
-                                });
-                              }),
-                        ),
-                      ),
                       Container(
                         padding: EdgeInsets.all(5),
                         height: 70,
@@ -241,6 +208,47 @@ class _SearchPageState extends State<SearchPage> {
                           ],
                         ),
                       ),
+                      Container(
+                        child: ListTile(
+                          title: Text(_userGrade == "school"
+                              ? "Looking For College Books?"
+                              : "Looking For School Books?"),
+                          trailing: CupertinoSwitch(
+                              value: _gradeSwitch,
+                              onChanged: (bool val) {
+                                setState(() {
+                                  _gradeSwitch = val;
+                                });
+                              }),
+                        ),
+                      ),
+                      TextField(
+                          decoration: InputDecoration(
+                              filled: true,
+                              suffixIcon: IconButton(
+                                  icon: FaIcon(
+                                    FontAwesomeIcons.search,
+                                    color: Colors.black,
+                                  ),
+                                  onPressed: () {
+                                    _search();
+                                  }),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              contentPadding: EdgeInsets.only(
+                                  left: 15, bottom: 11, top: 11, right: 15),
+                              fillColor: Color(0xFFdbd7d2),
+                              hintText: "Enter Book Name"),
+                          onChanged: (value) {
+                            setState(() {
+                              _searchParam = value;
+                            });
+                          }),
+                      SizedBox(
+                        height: 10,
+                      ),
                       SizedBox(
                         height: 10,
                       ),
@@ -256,27 +264,6 @@ class _SearchPageState extends State<SearchPage> {
                       SizedBox(
                         height: 10,
                       ),
-                      ButtonTheme(
-                          minWidth: 200,
-                          height: 40,
-                          child: FlatButton.icon(
-                              hoverColor: Color(0xFFe1ae10),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0))),
-                              color: Color(0xFFF2C94C),
-                              padding: EdgeInsets.all(2),
-                              icon: FaIcon(
-                                FontAwesomeIcons.search,
-                                size: 16,
-                              ),
-                              label: Text(
-                                "Search",
-                                style: TextStyle(fontSize: 16.0),
-                              ),
-                              onPressed: () {
-                                _search();
-                              }))
                     ],
                   )),
               Expanded(

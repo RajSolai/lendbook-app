@@ -182,6 +182,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               child: Badge(
                 elevation: 5,
                 toAnimate: true,
+                animationType: BadgeAnimationType.fade,
                 badgeContent: Text(
                   _getInboxcount() == null ? '0' : _getInboxcount(),
                   style: TextStyle(

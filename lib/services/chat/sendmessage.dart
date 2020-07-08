@@ -181,11 +181,16 @@ class _SendMessageState extends State<SendMessage> {
                   children: <Widget>[
                     Flexible(
                       child: TextField(
-                          controller: _messageCtrl,
                           decoration: InputDecoration(
+                              filled: true,
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              hintText: "Type in Your Message"),
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              contentPadding: EdgeInsets.only(
+                                  left: 15, bottom: 11, top: 11, right: 15),
+                              fillColor: Color(0xFFdbd7d2),
+                              hintText: "Enter Book Name"),
                           onChanged: (value) {
                             setState(() {
                               _message = value;
