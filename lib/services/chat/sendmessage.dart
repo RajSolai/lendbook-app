@@ -1,8 +1,8 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:lendbook/components/CustomAppBar.dart';
 import 'package:lendbook/services/chat/messagebox.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,6 +34,7 @@ class SendMessage extends StatefulWidget {
 class _SendMessageState extends State<SendMessage> {
   ScrollController _scrollController = new ScrollController();
   TextEditingController _messageCtrl = new TextEditingController();
+  var brightness = SchedulerBinding.instance.window.platformBrightness;
 
   String uid, _username, _userdp;
   String _message;
@@ -189,7 +190,9 @@ class _SendMessageState extends State<SendMessage> {
                               ),
                               contentPadding: EdgeInsets.only(
                                   left: 15, bottom: 11, top: 11, right: 15),
-                              fillColor: Color(0xFFdbd7d2),
+                              fillColor: brightness == Brightness.dark
+                                  ? Color(0xFF666a6d)
+                                  : Color(0xFFd8dcd6),
                               hintText: "Enter Book Name"),
                           onChanged: (value) {
                             setState(() {

@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:lendbook/pages/addbook.dart';
 import 'package:lendbook/pages/myposts.dart';
 import 'package:lendbook/pages/search.dart';
@@ -7,21 +10,23 @@ import 'package:lendbook/pages/login.dart';
 import 'package:lendbook/pages/register.dart';
 import 'package:lendbook/pages/home.dart';
 import 'package:lendbook/services/chat/messages.dart';
-import 'package:google_map_location_picker/generated/i18n.dart'
-    as location_picker;
 
 main(List<String> args) {
   runApp(App());
+  var brightness = SchedulerBinding.instance.window.platformBrightness;
+  if (brightness == Brightness.dark) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light
+        .copyWith(systemNavigationBarColor: Colors.black));
+  } else {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light
+        .copyWith(systemNavigationBarColor: Colors.white));
+  }
 }
 
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      supportedLocales: const <Locale>[
-        Locale('en', ''),
-        Locale('ar', ''),
-      ],
       debugShowCheckedModeBanner: false,
       title: "LendBook",
       home: Splash(),
@@ -39,6 +44,13 @@ class App extends StatelessWidget {
           primaryColor: Color(0xFFF2C94C),
           accentColor: Color(0xFFF2C94C),
           accentColorBrightness: Brightness.light),
+      darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          inputDecorationTheme: InputDecorationTheme(
+              hintStyle: TextStyle(color: Color(0xFFd8dcd6))),
+          cardColor: Color(0xFF1b1e23),
+          cupertinoOverrideTheme: CupertinoThemeData(
+              textTheme: CupertinoTextThemeData(primaryColor: Colors.white))),
     );
   }
 }

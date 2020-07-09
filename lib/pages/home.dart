@@ -112,6 +112,7 @@ class _HomeState extends State<Home> {
                               donorimg: document['bookdonorprofile'],
                               booksubject: document['booksubject'],
                               bookcondition: document['bookcondition'],
+                              bookpickupaddress: document['bookpickuplocation'],
                             );
                           }).toList(),
                         );

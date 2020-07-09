@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lendbook/components/CustomAppBar.dart';
 import 'package:lendbook/components/homecards.dart';
@@ -13,11 +14,11 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   String _searchParam;
-  String _searchSubject;
+  String _searchSubject = "Physics";
   String _userGrade = "";
   String _uid;
-  List _searchRecords;
   bool _gradeSwitch = false;
+  var brightness = SchedulerBinding.instance.window.platformBrightness;
 
   List<Map> _schoolData = [
     {"title": "Physics", "icon": FontAwesomeIcons.atom},
@@ -62,22 +63,6 @@ class _SearchPageState extends State<SearchPage> {
     } else {
       return _userGrade;
     }
-  }
-
-  Future<void> _search() async {
-    Firestore _firestore = Firestore.instance;
-    await _firestore
-        .collection("BookPosts")
-        .document(_grade())
-        .collection(
-            _searchSubject.toUpperCase().replaceAll(new RegExp(r"\s+"), ""))
-        .where("bookname", isLessThanOrEqualTo: _searchParam.toUpperCase())
-        .getDocuments()
-        .then((value) {
-      setState(() {
-        _searchRecords = value.documents.toList();
-      });
-    });
   }
 
   @override
@@ -167,7 +152,6 @@ class _SearchPageState extends State<SearchPage> {
                                 itemBuilder: (BuildContext context, int index) {
                                   return InkWell(
                                     onTap: () {
-                                      print(_universityData[index]['title']);
                                       setState(() {
                                         _searchSubject =
                                             _universityData[index]['title'];
@@ -225,21 +209,15 @@ class _SearchPageState extends State<SearchPage> {
                       TextField(
                           decoration: InputDecoration(
                               filled: true,
-                              suffixIcon: IconButton(
-                                  icon: FaIcon(
-                                    FontAwesomeIcons.search,
-                                    color: Colors.black,
-                                  ),
-                                  onPressed: () {
-                                    _search();
-                                  }),
                               border: OutlineInputBorder(
                                 borderSide: BorderSide.none,
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               contentPadding: EdgeInsets.only(
                                   left: 15, bottom: 11, top: 11, right: 15),
-                              fillColor: Color(0xFFdbd7d2),
+                              fillColor: brightness == Brightness.dark
+                                  ? Color(0xFF666a6d)
+                                  : Color(0xFFd8dcd6),
                               hintText: "Enter Book Name"),
                           onChanged: (value) {
                             setState(() {
@@ -267,22 +245,66 @@ class _SearchPageState extends State<SearchPage> {
                     ],
                   )),
               Expanded(
-                child: ListView.builder(
-                    padding: EdgeInsets.all(10),
-                    itemCount:
-                        _searchRecords == null ? 0 : _searchRecords.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      print(_searchRecords[index]['donorname']);
-                      return HomeCards(
-                        imgurl: _searchRecords[index]['bookimage'],
-                        bookname: _searchRecords[index]['bookname'],
-                        bookauthor: _searchRecords[index]['bookauthor'],
-                        booksubject: _searchRecords[index]['booksubject'],
-                        bookcondition: _searchRecords[index]['bookcondition'],
-                        donorname: _searchRecords[index]['bookdonor'],
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _searchParam == null
+                      ? Firestore.instance
+                          .collection("BookPosts")
+                          .document(_grade())
+                          .collection(_searchSubject
+                              .toUpperCase()
+                              .replaceAll(new RegExp(r"\s+"), ""))
+                          .orderBy("postedtime", descending: true)
+                          .snapshots()
+                      : _searchParam == ""
+                          ? Firestore.instance
+                              .collection("BookPosts")
+                              .document(_grade())
+                              .collection(_searchSubject
+                                  .toUpperCase()
+                                  .replaceAll(new RegExp(r"\s+"), ""))
+                              .orderBy("postedtime", descending: true)
+                              .snapshots()
+                          : Firestore.instance
+                              .collection("BookPosts")
+                              .document(_grade())
+                              .collection(_searchSubject
+                                  .toUpperCase()
+                                  .replaceAll(new RegExp(r"\s+"), ""))
+                              .where("bookname",
+                                  isLessThanOrEqualTo:
+                                      _searchParam.toUpperCase(),
+                                  isGreaterThanOrEqualTo:
+                                      _searchParam.toUpperCase(),
+                                  isEqualTo: _searchParam.toUpperCase())
+                              .snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: CircularProgressIndicator(),
                       );
-                    }),
-              ),
+                    } else {
+                      return ListView(
+                        padding: EdgeInsets.all(10),
+                        children: snapshot.data.documents
+                            .map((DocumentSnapshot document) {
+                          return HomeCards(
+                            imgurl: document['bookimage'],
+                            bookname: document['bookname'],
+                            bookauthor: document['bookauthor'],
+                            donoruid: document['bookdonoruid'],
+                            donorname: document['bookdonor'],
+                            donorimg: document['bookdonorprofile'],
+                            booksubject: document['booksubject'],
+                            bookcondition: document['bookcondition'],
+                            bookpickupaddress: document['bookpickuplocation'],
+                          );
+                        }).toList(),
+                      );
+                    }
+                  },
+                ),
+              )
             ],
           )),
     );

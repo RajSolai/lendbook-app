@@ -28,8 +28,8 @@ class _AddBookState extends State<AddBook> {
   String _bookCondition = "New Book";
   String _donorPickupLocation;
   String _uid;
-  String _pickupLat;
-  String _pickupLong;
+  num _pickupLat;
+  num _pickupLong;
   String _bookSchoolSubject = "Physics";
   String _bookCollegeSubject = "Physics";
   Map _userDetails;
@@ -176,8 +176,8 @@ class _AddBookState extends State<AddBook> {
       });
       print(value.latitude.toString() + " " + value.longitude.toString());
       setState(() {
-        _pickupLat = value.latitude.toString();
-        _pickupLong = value.longitude.toString();
+        _pickupLat = value.latitude;
+        _pickupLong = value.longitude;
       });
     });
   }

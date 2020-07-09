@@ -17,7 +17,7 @@ class MsgReq extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.all(5),
+        margin: EdgeInsets.all(1),
         height: 150,
         child: InkWell(
           onTap: () {
@@ -32,11 +32,14 @@ class MsgReq extends StatelessWidget {
             }));
           },
           child: Card(
+            elevation: 3.0,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(18),
                   height: 100,
                   width: 100,
                   child: CircleAvatar(
