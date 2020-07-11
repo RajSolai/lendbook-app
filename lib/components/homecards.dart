@@ -1,9 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:lendbook/services/post/postdetails.dart';
 
 class HomeCards extends StatelessWidget {
+  final brightness = SchedulerBinding.instance.window.platformBrightness;
+
   final String imgurl,
       bookname,
       bookauthor,
@@ -42,61 +45,75 @@ class HomeCards extends StatelessWidget {
           }));
         },
         child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              color: brightness == Brightness.light
+                  ? Color.fromARGB(255, 238, 238, 238)
+                  : Color(0xFF181b20),
+              boxShadow: [
+                BoxShadow(
+                    offset: Offset(3, 3),
+                    color: brightness == Brightness.light
+                        ? Color.fromARGB(50, 0, 0, 0)
+                        : Color.fromARGB(90, 0, 0, 0),
+                    blurRadius: 15),
+                BoxShadow(
+                    offset: Offset(-3, -3),
+                    color: brightness == Brightness.light
+                        ? Color.fromARGB(100, 255, 255, 255)
+                        : Color.fromARGB(80, 0, 0, 0),
+                    blurRadius: 15)
+              ]),
           padding: EdgeInsets.all(0),
           height: 200,
           margin: EdgeInsets.all(2),
-          child: Card(
-            elevation: 5.0,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8.0))),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Flexible(
-                        child: Text(
-                          bookname.length <= 11
-                              ? bookname
-                              : bookname.substring(0, 11) + "..",
-                          textScaleFactor: 1.0,
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        "By : " + bookauthor,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Flexible(
+                      child: Text(
+                        bookname.length <= 11
+                            ? bookname
+                            : bookname.substring(0, 11) + "..",
+                        textScaleFactor: 1.0,
                         style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w200),
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 10),
-                      Text(
-                        "Subject : " + booksubject,
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w200),
-                      )
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      "By : " + bookauthor,
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.w200),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      "Subject : " + booksubject,
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.w200),
+                    )
+                  ],
                 ),
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(8.0),
-                      bottomRight: Radius.circular(8.0)),
-                  child: CachedNetworkImage(
-                    //height: 190,
-                    // width: 190,
-                    imageUrl: imgurl,
-                    placeholder: (context, url) => Text("Loading Image"),
-                  ),
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(8.0),
+                    bottomRight: Radius.circular(8.0)),
+                child: CachedNetworkImage(
+                  //height: 190,
+                  // width: 190,
+                  imageUrl: imgurl,
+                  placeholder: (context, url) => Text("Loading Image"),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ));
   }

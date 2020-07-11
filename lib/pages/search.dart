@@ -113,9 +113,29 @@ class _SearchPageState extends State<SearchPage> {
                                       });
                                     },
                                     child: Container(
-                                      margin: EdgeInsets.all(5),
+                                      margin: EdgeInsets.all(8),
                                       padding: EdgeInsets.all(8),
                                       decoration: BoxDecoration(
+                                          boxShadow: [
+                                            BoxShadow(
+                                                offset: Offset(2, 2),
+                                                color: brightness ==
+                                                        Brightness.light
+                                                    ? Color.fromARGB(
+                                                        50, 0, 0, 0)
+                                                    : Color.fromARGB(
+                                                        90, 0, 0, 0),
+                                                blurRadius: 5),
+                                            BoxShadow(
+                                                offset: Offset(-2, -2),
+                                                color: brightness ==
+                                                        Brightness.light
+                                                    ? Color.fromARGB(
+                                                        150, 255, 255, 255)
+                                                    : Color.fromARGB(
+                                                        80, 0, 0, 0),
+                                                blurRadius: 5)
+                                          ],
                                           color: Color(0xFF9852f9),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(8))),
@@ -158,9 +178,29 @@ class _SearchPageState extends State<SearchPage> {
                                       });
                                     },
                                     child: Container(
-                                      margin: EdgeInsets.all(5),
+                                      margin: EdgeInsets.all(8),
                                       padding: EdgeInsets.all(8),
                                       decoration: BoxDecoration(
+                                          boxShadow: [
+                                            BoxShadow(
+                                                offset: Offset(2, 2),
+                                                color: brightness ==
+                                                        Brightness.light
+                                                    ? Color.fromARGB(
+                                                        50, 0, 0, 0)
+                                                    : Color.fromARGB(
+                                                        90, 0, 0, 0),
+                                                blurRadius: 5),
+                                            BoxShadow(
+                                                offset: Offset(-2, -2),
+                                                color: brightness ==
+                                                        Brightness.light
+                                                    ? Color.fromARGB(
+                                                        150, 255, 255, 255)
+                                                    : Color.fromARGB(
+                                                        80, 0, 0, 0),
+                                                blurRadius: 5)
+                                          ],
                                           color: Color(0xFF9852f9),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(8))),
@@ -206,24 +246,28 @@ class _SearchPageState extends State<SearchPage> {
                               }),
                         ),
                       ),
-                      TextField(
-                          decoration: InputDecoration(
-                              filled: true,
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              contentPadding: EdgeInsets.only(
-                                  left: 15, bottom: 11, top: 11, right: 15),
-                              fillColor: brightness == Brightness.dark
-                                  ? Color(0xFF666a6d)
-                                  : Color(0xFFd8dcd6),
-                              hintText: "Enter Book Name"),
-                          onChanged: (value) {
-                            setState(() {
-                              _searchParam = value;
-                            });
-                          }),
+                      Material(
+                        borderRadius: BorderRadius.circular(20.0),
+                        elevation: 5.0,
+                        child: TextField(
+                            decoration: InputDecoration(
+                                filled: true,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                contentPadding: EdgeInsets.only(
+                                    left: 15, bottom: 11, top: 11, right: 15),
+                                fillColor: brightness == Brightness.dark
+                                    ? Color(0xFF666a6d)
+                                    : Color(0xFFd8dcd6),
+                                hintText: "Enter Book Name"),
+                            onChanged: (value) {
+                              setState(() {
+                                _searchParam = value;
+                              });
+                            }),
+                      ),
                       SizedBox(
                         height: 10,
                       ),

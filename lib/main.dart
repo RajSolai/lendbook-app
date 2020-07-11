@@ -40,11 +40,13 @@ class App extends StatelessWidget {
         "/allmessages": (context) => Messages()
       },
       theme: ThemeData(
+          scaffoldBackgroundColor: Color.fromARGB(255, 238, 238, 238),
           fontFamily: "Inter",
           primaryColor: Color(0xFFF2C94C),
           accentColor: Color(0xFFF2C94C),
           accentColorBrightness: Brightness.light),
       darkTheme: ThemeData(
+        scaffoldBackgroundColor: Color(0xFF1b1e23),
           brightness: Brightness.dark,
           inputDecorationTheme: InputDecorationTheme(
               hintStyle: TextStyle(color: Color(0xFFd8dcd6))),

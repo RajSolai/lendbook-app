@@ -177,28 +177,32 @@ class _SendMessageState extends State<SendMessage> {
                   }),
             )),
             Container(
-                padding: EdgeInsets.all(10),
+                padding: EdgeInsets.only(bottom: 10.0, left: 12.0, right: 12.0),
                 child: Row(
                   children: <Widget>[
                     Flexible(
-                      child: TextField(
-                          decoration: InputDecoration(
-                              filled: true,
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              contentPadding: EdgeInsets.only(
-                                  left: 15, bottom: 11, top: 11, right: 15),
-                              fillColor: brightness == Brightness.dark
-                                  ? Color(0xFF666a6d)
-                                  : Color(0xFFd8dcd6),
-                              hintText: "Enter Book Name"),
-                          onChanged: (value) {
-                            setState(() {
-                              _message = value;
-                            });
-                          }),
+                      child: Material(
+                        elevation: 5.0,
+                        borderRadius: BorderRadius.circular(20.0),
+                        child: TextField(
+                            decoration: InputDecoration(
+                                filled: true,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                contentPadding: EdgeInsets.only(
+                                    left: 15, bottom: 11, top: 11, right: 15),
+                                fillColor: brightness == Brightness.dark
+                                    ? Color(0xFF666a6d)
+                                    : Color(0xFFd8dcd6),
+                                hintText: "Enter your Message"),
+                            onChanged: (value) {
+                              setState(() {
+                                _message = value;
+                              });
+                            }),
+                      ),
                     ),
                     Container(
                       child: Ink(

@@ -415,7 +415,7 @@ class _AddBookState extends State<AddBook> {
                   ),
                   Center(
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       CupertinoButton(
                           borderRadius: BorderRadius.circular(10),

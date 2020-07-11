@@ -36,7 +36,7 @@ class _MessageBoxState extends State<MessageBox> {
         children: <Widget>[
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(8)),
+              borderRadius: BorderRadius.all(Radius.circular(6)),
               color: Color(0xFFF2C94C), //0xFF9852f9
             ),
             padding: EdgeInsets.all(10),
@@ -56,7 +56,7 @@ class _MessageBoxState extends State<MessageBox> {
         children: <Widget>[
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(8)),
+              borderRadius: BorderRadius.all(Radius.circular(6)),
               color: Color(0xFF9852f9),
             ),
             padding: EdgeInsets.all(10),
