@@ -3,7 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lendbook/animations/slidepageroute.dart';
 import 'package:lendbook/pages/dash.dart';
+import 'package:lendbook/services/chat/messages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:badges/badges.dart';
 
@@ -71,16 +73,21 @@ class _CustomAppBarState extends State<CustomAppBar> {
           SizedBox(
             width: 20,
           ),
-          Container(
-              margin: EdgeInsets.only(top: 40),
-              height: 40,
-              width: 40,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Icon(CupertinoIcons.back),
-              )),
+          GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Container(
+                margin: EdgeInsets.only(top: 40),
+                height: 40,
+                width: 40,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Icon(CupertinoIcons.back),
+                )),
+          ),
           SizedBox(
             width: 5,
           ),
@@ -111,8 +118,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               children: <Widget>[
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(context,
-                        CupertinoPageRoute(builder: (context) => DashBoard()));
+                    Navigator.push(context, SlideRightRoute(page: DashBoard()));
                   },
                   child: CircleAvatar(
                     backgroundImage: CachedNetworkImageProvider(
@@ -152,8 +158,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               children: <Widget>[
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(context,
-                        CupertinoPageRoute(builder: (context) => DashBoard()));
+                    Navigator.push(context, SlideRightRoute(page: DashBoard()));
                   },
                   child: CircleAvatar(
                     backgroundImage: CachedNetworkImageProvider(
@@ -191,7 +196,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 child: IconButton(
                     icon: FaIcon(FontAwesomeIcons.inbox),
                     onPressed: () {
-                      Navigator.pushNamed(context, "/allmessages");
+                      // Navigator.pushNamed(context, "/allmessages");
+                      Navigator.push(context, SlideLeftRoute(page: Messages()));
                     }),
               ))
         ],
@@ -209,8 +215,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               width: 40,
               child: GestureDetector(
                 onTap: () {
-                  Navigator.push(context,
-                      CupertinoPageRoute(builder: (context) => DashBoard()));
+                  Navigator.push(context, SlideRightRoute(page: DashBoard()));
                 },
                 child: CircleAvatar(
                   backgroundImage: CachedNetworkImageProvider(

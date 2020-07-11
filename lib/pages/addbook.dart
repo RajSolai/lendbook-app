@@ -2,16 +2,18 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lendbook/components/CustomAppBar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as _path;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:random_string/random_string.dart';
 import 'package:toast/toast.dart';
+import 'package:android_intent/android_intent.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:geolocator/geolocator.dart';
 
 class AddBook extends StatefulWidget {
   @override
@@ -163,22 +165,31 @@ class _AddBookState extends State<AddBook> {
     });
   }
 
+  void test() {
+    print("Hello");
+  }
+
+  void openLocationSetting() async {
+    final AndroidIntent intent = new AndroidIntent(
+      action: 'android.settings.LOCATION_SOURCE_SETTINGS',
+    );
+    await intent.launch();
+  }
+
   Future<void> _getLocationViaGmaps() async {
+    Permission.location.request().whenComplete(
+        () => {openLocationSetting(), Toast.show("Turn On Location", context)});
     await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((value) {
-      var coordinates = new Coordinates(value.latitude, value.longitude);
-      Geocoder.local.findAddressesFromCoordinates(coordinates).then((value) {
-        print(value.first.addressLine);
-        setState(() {
-          _donorPickupLocation = value.first.addressLine;
-        });
-      });
-      print(value.latitude.toString() + " " + value.longitude.toString());
-      setState(() {
-        _pickupLat = value.latitude;
-        _pickupLong = value.longitude;
-      });
+      Coordinates location = new Coordinates(value.latitude, value.longitude);
+      Geocoder.local.findAddressesFromCoordinates(location).then((res) => {
+            setState(() {
+              _donorPickupLocation = res.first.addressLine;
+              _pickupLat = value.latitude;
+              _pickupLong = value.longitude;
+            })
+          });
     });
   }
 
@@ -262,6 +273,7 @@ class _AddBookState extends State<AddBook> {
       'bookdonoruid': _uid,
       'bookdonorprofile': _userDetails['dpurl'],
       'bookdonor': _userDetails['displayname'],
+      'bookdonorcity': _userDetails['city'],
       'bookdonorphone': _userDetails['phone'],
       'bookdonorwa': _userDetails['waphone'],
     };
@@ -402,7 +414,10 @@ class _AddBookState extends State<AddBook> {
                     },
                   ),
                   Center(
-                      child: CupertinoButton(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CupertinoButton(
                           borderRadius: BorderRadius.circular(10),
                           child: Text(
                             "Choose Current Location",
@@ -410,8 +425,15 @@ class _AddBookState extends State<AddBook> {
                           ),
                           onPressed: () {
                             _getLocationViaGmaps();
+                            //test();
                             //_customProgressDialog();
-                          })),
+                          }),
+                      Tooltip(
+                        message: "Note: The location is Approximate",
+                        child: Icon(Icons.info),
+                      )
+                    ],
+                  )),
                   Center(
                     child: Text(
                       _donorPickupLocation == null ? "" : _donorPickupLocation,

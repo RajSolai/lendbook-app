@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MessageBox extends StatefulWidget {
@@ -10,6 +11,8 @@ class MessageBox extends StatefulWidget {
 }
 
 class _MessageBoxState extends State<MessageBox> {
+  var brightness = SchedulerBinding.instance.window.platformBrightness;
+
   String uid;
 
   Future<void> _getUID() async {
@@ -38,7 +41,12 @@ class _MessageBoxState extends State<MessageBox> {
             ),
             padding: EdgeInsets.all(10),
             margin: EdgeInsets.all(5),
-            child: Text(widget.message, style: TextStyle(fontSize: 14)),
+            child: Text(widget.message,
+                style: TextStyle(
+                    fontSize: 14,
+                    color: brightness == Brightness.dark
+                        ? Color(0xFF000000)
+                        : Color(0xFF000000))),
           ),
         ],
       );

@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lendbook/components/CustomAppBar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lendbook/components/homecards.dart';
+import 'package:lendbook/pages/addbook.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lendbook/animations/slidepageroute.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -15,6 +19,7 @@ class _HomeState extends State<Home> {
   String _dpurl;
   String _userFavSub;
   String _userGrade;
+  String _userCity;
 
   Future<void> _getdata() async {
     final _prefs = await SharedPreferences.getInstance();
@@ -30,10 +35,21 @@ class _HomeState extends State<Home> {
     Firestore _db = Firestore.instance;
     await _db.collection("userDetails").document(_uid).get().then((value) {
       setState(() {
+        _userCity = value.data['city'];
         _userFavSub = value.data['userinterest'];
         _userGrade = value.data['grade'];
       });
     });
+  }
+
+  Widget _loading() {
+    return Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  Widget _noData() {
+    return Center(child: Text("No Data"));
   }
 
   @override
@@ -49,7 +65,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            Navigator.pushNamed(context, "/addbook");
+            Navigator.push(context, SlideTopRoute(page: AddBook()));
           },
           icon: FaIcon(
             FontAwesomeIcons.plus,
@@ -90,14 +106,14 @@ class _HomeState extends State<Home> {
                         .collection(_userFavSub == null
                             ? ""
                             : _userFavSub.toUpperCase())
+                        .where('bookdonorcity', isEqualTo: _userCity)
                         .orderBy('postedtime')
+                        .limit(20)
                         .snapshots(),
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (!snapshot.hasData) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
+                      if (snapshot.data == null) {
+                        return _loading();
                       } else {
                         return ListView(
                           padding: EdgeInsets.all(10),

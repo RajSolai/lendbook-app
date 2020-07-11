@@ -63,6 +63,7 @@ class HomeCards extends StatelessWidget {
                           bookname.length <= 11
                               ? bookname
                               : bookname.substring(0, 11) + "..",
+                          textScaleFactor: 1.0,
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                           overflow: TextOverflow.ellipsis,
