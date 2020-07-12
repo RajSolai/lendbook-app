@@ -63,6 +63,10 @@ class _MessagesState extends State<Messages> {
                             chatdoc: document['chatdoc'],
                             senderuid: document['senderuid'],
                             chatcoll: document['chatcoll'],
+                            interestedbook: document['interestedinbook'],
+                            interestedbookdonor:
+                                document['interestedbookdonor'],
+                            bookgrade: document['bookgrade'],
                             sendername: document['sendername']);
                       }).toList(),
                     );

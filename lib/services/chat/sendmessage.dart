@@ -11,10 +11,13 @@ class SendMessage extends StatefulWidget {
   final donoruid,
       donorname,
       donorimg,
+      bookgrade,
       variant,
       chatdoc,
       chatcoll,
+      bookid,
       senderuid,
+      interestedbook,
       sendername;
   SendMessage({
     this.donoruid,
@@ -25,6 +28,9 @@ class SendMessage extends StatefulWidget {
     this.chatcoll,
     this.sendername,
     this.senderuid,
+    this.interestedbook,
+    this.bookgrade,
+    this.bookid,
   });
 
   @override
@@ -71,7 +77,9 @@ class _SendMessageState extends State<SendMessage> {
       'chatcoll': chatID,
       'senderimg': _userdp,
       'sendername': _username,
-      'senderuid': uid
+      'senderuid': uid,
+      'interestedinbook': widget.interestedbook,
+      'interestedbookgrade': widget.bookgrade,
     };
     await _db
         .collection("chats")
@@ -106,7 +114,9 @@ class _SendMessageState extends State<SendMessage> {
       'chatcoll': this.widget.chatdoc,
       'senderimg': _userdp,
       'sendername': _username,
-      'senderuid': uid
+      'senderuid': uid,
+      'interestedinbook': widget.interestedbook,
+      'interestedbookgrade': widget.bookgrade,
     };
     await _db
         .collection("chats")
@@ -144,7 +154,10 @@ class _SendMessageState extends State<SendMessage> {
           children: <Widget>[
             CustomAppBar(
               title: this.widget.sendername,
-              variant: "no-avatar",
+              variant: "chat",
+              bookid: widget.interestedbook,
+              bookgrade: widget.bookgrade,
+              donorid: this.widget.donoruid,
             ),
             Expanded(
                 child: Container(
@@ -229,6 +242,9 @@ class _SendMessageState extends State<SendMessage> {
             CustomAppBar(
               title: this.widget.donorname,
               variant: "no-avatar",
+              bookid: widget.bookid,
+              bookgrade: widget.bookgrade,
+              donorid: this.widget.donoruid,
             ),
             Expanded(
                 child: Container(

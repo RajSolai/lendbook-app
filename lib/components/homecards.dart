@@ -11,6 +11,8 @@ class HomeCards extends StatelessWidget {
       bookname,
       bookauthor,
       booksubject,
+      bookid,
+      bookgrade,
       bookcondition,
       bookpickupaddress,
       donoruid,
@@ -25,7 +27,9 @@ class HomeCards extends StatelessWidget {
       @required this.donorname,
       this.donorimg,
       @required this.bookcondition,
-      @required this.bookpickupaddress});
+      @required this.bookpickupaddress,
+      @required this.bookid,
+      @required this.bookgrade});
 
   @override
   Widget build(BuildContext context) {

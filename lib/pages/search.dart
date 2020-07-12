@@ -342,6 +342,8 @@ class _SearchPageState extends State<SearchPage> {
                             booksubject: document['booksubject'],
                             bookcondition: document['bookcondition'],
                             bookpickupaddress: document['bookpickuplocation'],
+                            bookid: document['bookid'],
+                            bookgrade: document['bookgrade'],
                           );
                         }).toList(),
                       );

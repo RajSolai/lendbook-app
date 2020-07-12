@@ -12,7 +12,9 @@ class PostDetails extends StatefulWidget {
       donorph,
       donorwa,
       donorimage,
+      bookid,
       bookname,
+      bookgrade,
       bookimgurl,
       booksubject,
       bookpickupaddress,
@@ -35,7 +37,8 @@ class PostDetails extends StatefulWidget {
       this.booksubject,
       this.bookpickupaddress,
       this.lat,
-      this.lon});
+      this.lon,
+      this.bookid, this.bookgrade});
 
   @override
   _PostDetailsState createState() => _PostDetailsState();
@@ -155,9 +158,13 @@ class _PostDetailsState extends State<PostDetails> {
                   Navigator.push(context,
                       CupertinoPageRoute(builder: (BuildContext context) {
                     return SendMessage(
-                        donorname: this.widget.donorname,
-                        donoruid: this.widget.donoruid,
-                        donorimg: this.widget.donorimage);
+                      donorname: this.widget.donorname,
+                      bookgrade: this.widget.bookgrade,
+                      donoruid: this.widget.donoruid,
+                      bookid : this.widget.bookid,
+                      donorimg: this.widget.donorimage,
+                      interestedbook: this.widget.bookid,
+                    );
                   }));
                 }),
             SizedBox(

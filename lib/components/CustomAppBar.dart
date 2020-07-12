@@ -10,8 +10,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:badges/badges.dart';
 
 class CustomAppBar extends StatefulWidget {
-  final title, variant, dpurl;
-  CustomAppBar({this.title, this.variant, this.dpurl});
+  final title, variant, dpurl, bookid, bookgrade, donorid;
+  CustomAppBar(
+      {this.title,
+      this.variant,
+      this.dpurl,
+      this.bookid,
+      this.donorid,
+      this.bookgrade});
 
   @override
   _CustomAppBarState createState() => _CustomAppBarState();
@@ -104,6 +110,102 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ),
         ],
       ));
+    } else if (widget.variant == "chat") {
+      //* if the user is the donor
+      if (widget.donorid == uid) {
+        return Container(
+            child: Row(
+          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            /* SizedBox(
+              width: 20,
+            ), */
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Container(
+                  margin: EdgeInsets.only(top: 40),
+                  height: 40,
+                  width: 40,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(CupertinoIcons.back),
+                  )),
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 40, bottom: 0),
+              padding: EdgeInsets.all(10),
+              child: Text(
+                this.widget.title + "Donor",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
+            /* SizedBox(
+              width: 80,
+            ), */
+            Container(
+                margin: EdgeInsets.only(top: 40, bottom: 0, right: 10),
+                child: IconButton(
+                    icon: FaIcon(FontAwesomeIcons.search),
+                    tooltip: "Mark book as Donated and Delete it",
+                    onPressed: () {
+                      Firestore()
+                          .collection("BookPosts")
+                          .document("bookgrade")
+                          .collection("booksubject")
+                          .document("bookid")
+                          .delete()
+                          .whenComplete(() => {print("Document Deleted")});
+                    }))
+          ],
+        ));
+      } else {
+        //* if the user is not the donor
+        return Container(
+            child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            SizedBox(
+              width: 20,
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Container(
+                  margin: EdgeInsets.only(top: 40),
+                  height: 40,
+                  width: 40,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(CupertinoIcons.back),
+                  )),
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 40, bottom: 0),
+              padding: EdgeInsets.all(10),
+              child: Text(
+                this.widget.title + " not donor",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(
+              width: 80,
+            ),
+          ],
+        ));
+      }
     } else if (widget.variant == "search") {
       return Container(
           child: Row(

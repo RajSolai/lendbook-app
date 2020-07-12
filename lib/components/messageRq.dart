@@ -7,7 +7,15 @@ import 'package:lendbook/services/chat/sendmessage.dart';
 class MsgReq extends StatelessWidget {
   final brightness = SchedulerBinding.instance.window.platformBrightness;
 
-  final name, image, chatdoc, chatcoll, sendername, senderuid;
+  final name,
+      image,
+      chatdoc,
+      chatcoll,
+      sendername,
+      senderuid,
+      interestedbook,
+      bookgrade,
+      interestedbookdonor;
   MsgReq(
       {Key key,
       this.name,
@@ -15,7 +23,10 @@ class MsgReq extends StatelessWidget {
       this.chatdoc,
       this.chatcoll,
       this.sendername,
-      this.senderuid});
+      this.senderuid,
+      this.interestedbook,
+      this.interestedbookdonor,
+      this.bookgrade});
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +63,9 @@ class MsgReq extends StatelessWidget {
                   chatcoll: chatcoll,
                   sendername: sendername,
                   senderuid: senderuid,
+                  interestedbook: interestedbook,
+                  donoruid: interestedbookdonor,
+                  bookgrade: bookgrade,
                 );
               }));
             },

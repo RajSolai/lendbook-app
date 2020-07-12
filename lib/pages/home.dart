@@ -123,12 +123,14 @@ class _HomeState extends State<Home> {
                               imgurl: document['bookimage'],
                               bookname: document['bookname'],
                               bookauthor: document['bookauthor'],
+                              bookid: document['bookid'],
                               donoruid: document['bookdonoruid'],
                               donorname: document['bookdonor'],
                               donorimg: document['bookdonorprofile'],
                               booksubject: document['booksubject'],
                               bookcondition: document['bookcondition'],
                               bookpickupaddress: document['bookpickuplocation'],
+                              bookgrade: document['bookgrade'],
                             );
                           }).toList(),
                         );

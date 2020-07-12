@@ -269,6 +269,7 @@ class _AddBookState extends State<AddBook> {
       'booksubject': _bookSubject.replaceAll(new RegExp(r"\s+"), ""),
       'bookpickuplocation': _donorPickupLocation,
       'bookpickuplat': _pickupLat,
+      'bookgrade': _isSchoolBook ? "school" : "college",
       'bookpicklong': _pickupLong,
       'bookdonoruid': _uid,
       'bookdonorprofile': _userDetails['dpurl'],
