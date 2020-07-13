@@ -48,10 +48,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _noData() {
-    return Center(child: Text("No Data"));
-  }
-
   @override
   void initState() {
     super.initState();

@@ -18,6 +18,7 @@ class SendMessage extends StatefulWidget {
       bookid,
       senderuid,
       interestedbook,
+      interestedbooksub,
       sendername;
   SendMessage({
     this.donoruid,
@@ -31,6 +32,7 @@ class SendMessage extends StatefulWidget {
     this.interestedbook,
     this.bookgrade,
     this.bookid,
+    this.interestedbooksub,
   });
 
   @override
@@ -78,8 +80,10 @@ class _SendMessageState extends State<SendMessage> {
       'senderimg': _userdp,
       'sendername': _username,
       'senderuid': uid,
+      'interestedbookdonor': widget.donoruid,
       'interestedinbook': widget.interestedbook,
       'interestedbookgrade': widget.bookgrade,
+      'interestedbooksub': widget.interestedbooksub,
     };
     await _db
         .collection("chats")
@@ -115,8 +119,10 @@ class _SendMessageState extends State<SendMessage> {
       'senderimg': _userdp,
       'sendername': _username,
       'senderuid': uid,
+      'interestedbookdonor': uid,
       'interestedinbook': widget.interestedbook,
       'interestedbookgrade': widget.bookgrade,
+      'interestedbooksub': widget.interestedbooksub,
     };
     await _db
         .collection("chats")
@@ -156,6 +162,7 @@ class _SendMessageState extends State<SendMessage> {
               title: this.widget.sendername,
               variant: "chat",
               bookid: widget.interestedbook,
+              booksub: widget.interestedbooksub,
               bookgrade: widget.bookgrade,
               donorid: this.widget.donoruid,
             ),
@@ -194,28 +201,24 @@ class _SendMessageState extends State<SendMessage> {
                 child: Row(
                   children: <Widget>[
                     Flexible(
-                      child: Material(
-                        elevation: 5.0,
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: TextField(
-                            decoration: InputDecoration(
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                contentPadding: EdgeInsets.only(
-                                    left: 15, bottom: 11, top: 11, right: 15),
-                                fillColor: brightness == Brightness.dark
-                                    ? Color(0xFF666a6d)
-                                    : Color(0xFFd8dcd6),
-                                hintText: "Enter your Message"),
-                            onChanged: (value) {
-                              setState(() {
-                                _message = value;
-                              });
-                            }),
-                      ),
+                      child: TextField(
+                          decoration: InputDecoration(
+                              filled: true,
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              contentPadding: EdgeInsets.only(
+                                  left: 15, bottom: 11, top: 11, right: 15),
+                              fillColor: brightness == Brightness.dark
+                                  ? Color(0xFF666a6d)
+                                  : Color(0xFFd8dcd6),
+                              hintText: "Enter your Message"),
+                          onChanged: (value) {
+                            setState(() {
+                              _message = value;
+                            });
+                          }),
                     ),
                     Container(
                       child: Ink(

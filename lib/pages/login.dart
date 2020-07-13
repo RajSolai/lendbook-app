@@ -26,7 +26,7 @@ class _LoginState extends State<Login> {
         builder: (BuildContext context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                borderRadius: BorderRadius.all(Radius.circular(8.0))),
             title: Text("Email not Verified !😕"),
             content: Text(
                 "Hey, It seems Your EmailId is not verified. Please Verify your EmailID for further features like adding Favorites and Reseting Password"),
@@ -55,7 +55,7 @@ class _LoginState extends State<Login> {
         builder: (BuildContext context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                borderRadius: BorderRadius.all(Radius.circular(8.0))),
             title: Text(title),
             content: Text(content),
             actions: <Widget>[

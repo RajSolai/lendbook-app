@@ -2,22 +2,25 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lendbook/animations/slidepageroute.dart';
 import 'package:lendbook/pages/dash.dart';
 import 'package:lendbook/services/chat/messages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:badges/badges.dart';
+import 'package:toast/toast.dart';
 
 class CustomAppBar extends StatefulWidget {
-  final title, variant, dpurl, bookid, bookgrade, donorid;
+  final title, variant, dpurl, bookid, bookgrade, booksub, donorid;
   CustomAppBar(
       {this.title,
       this.variant,
       this.dpurl,
       this.bookid,
       this.donorid,
-      this.bookgrade});
+      this.bookgrade,
+      this.booksub});
 
   @override
   _CustomAppBarState createState() => _CustomAppBarState();
@@ -61,6 +64,41 @@ class _CustomAppBarState extends State<CustomAppBar> {
     return chatbadges;
   }
 
+  Future<void> _donate() async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0))),
+            content: Text(
+                "Do you wish to complete the donation and delete the post ?"),
+            actions: <Widget>[
+              CupertinoButton(
+                  child: Text(
+                    "Yes! Donate",
+                    style: TextStyle(color: Colors.green),
+                  ),
+                  onPressed: () {
+                    Firestore()
+                        .collection("BookPosts")
+                        .document(widget.bookgrade.toString().toLowerCase())
+                        .collection(widget.booksub.toString().toUpperCase())
+                        .document(widget.bookid)
+                        .delete()
+                        .whenComplete(() => {
+                              Toast.show("Completed Donation Process", context,
+                                  backgroundColor: Color(0xFF9852f9))
+                            });
+                  }),
+              CupertinoButton(
+                  child: Text("No! Wait"),
+                  onPressed: () => Navigator.of(context).pop())
+            ],
+          );
+        });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -102,6 +140,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             padding: EdgeInsets.all(10),
             child: Text(
               this.widget.title,
+              textScaleFactor: 1.0,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
@@ -115,11 +154,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
       if (widget.donorid == uid) {
         return Container(
             child: Row(
-          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            /* SizedBox(
+            SizedBox(
               width: 20,
-            ), */
+            ),
             GestureDetector(
               onTap: () {
                 Navigator.pop(context);
@@ -139,10 +179,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
               width: 5,
             ),
             Container(
-              margin: EdgeInsets.only(top: 40, bottom: 0),
+              margin: EdgeInsets.only(top: 40, bottom: 0, right: 90),
               padding: EdgeInsets.all(10),
               child: Text(
-                this.widget.title + "Donor",
+                this.widget.title,
+                textScaleFactor: 1.0,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
@@ -150,18 +191,19 @@ class _CustomAppBarState extends State<CustomAppBar> {
               width: 80,
             ), */
             Container(
-                margin: EdgeInsets.only(top: 40, bottom: 0, right: 10),
-                child: IconButton(
-                    icon: FaIcon(FontAwesomeIcons.search),
-                    tooltip: "Mark book as Donated and Delete it",
+                margin: EdgeInsets.only(top: 40, bottom: 0),
+                child: FlatButton.icon(
+                    icon: FaIcon(
+                      FontAwesomeIcons.solidCheckCircle,
+                      color: Colors.green[400],
+                    ),
+                    label: Text(
+                      "Donate",
+                      style: TextStyle(fontSize: 16),
+                      textScaleFactor: 1.0,
+                    ),
                     onPressed: () {
-                      Firestore()
-                          .collection("BookPosts")
-                          .document("bookgrade")
-                          .collection("booksubject")
-                          .document("bookid")
-                          .delete()
-                          .whenComplete(() => {print("Document Deleted")});
+                      _donate();
                     }))
           ],
         ));
@@ -169,7 +211,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
         //* if the user is not the donor
         return Container(
             child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             SizedBox(
               width: 20,
@@ -196,7 +237,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
               margin: EdgeInsets.only(top: 40, bottom: 0),
               padding: EdgeInsets.all(10),
               child: Text(
-                this.widget.title + " not donor",
+                this.widget.title,
+                textScaleFactor: 1.0,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
@@ -232,6 +274,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ),
                 Text(
                   this.widget.title,
+                  textScaleFactor: 1.0,
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ],
@@ -260,7 +303,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
               children: <Widget>[
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(context, SlideRightRoute(page: DashBoard()));
+                    Navigator.push(
+                        context,
+                        SlideRightRoute(
+                            page: DashBoard(
+                          dpurl: _dpurl,
+                        )));
                   },
                   child: CircleAvatar(
                     backgroundImage: CachedNetworkImageProvider(
@@ -272,6 +320,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ),
                 Text(
                   this.widget.title,
+                  textScaleFactor: 1.0,
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ],
@@ -332,6 +381,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             padding: EdgeInsets.all(10),
             child: Text(
               this.widget.title,
+              textScaleFactor: 1.0,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),

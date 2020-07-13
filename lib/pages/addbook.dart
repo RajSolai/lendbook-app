@@ -80,7 +80,7 @@ class _AddBookState extends State<AddBook> {
         builder: (BuildContext context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                borderRadius: BorderRadius.all(Radius.circular(8.0))),
             content: Row(
               children: <Widget>[
                 CircularProgressIndicator(),
@@ -105,7 +105,7 @@ class _AddBookState extends State<AddBook> {
           builder: (BuildContext context) {
             return AlertDialog(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
               title: Text(title),
               content: Text(content),
               actions: <Widget>[
@@ -123,7 +123,7 @@ class _AddBookState extends State<AddBook> {
           builder: (BuildContext context) {
             return AlertDialog(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
               title: Text(title),
               content: Text(content),
               actions: <Widget>[
@@ -163,10 +163,6 @@ class _AddBookState extends State<AddBook> {
     setState(() {
       _uid = _prefs.get("uid");
     });
-  }
-
-  void test() {
-    print("Hello");
   }
 
   void openLocationSetting() async {

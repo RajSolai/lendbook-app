@@ -6,6 +6,8 @@ import 'package:lendbook/components/CustomAppBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DashBoard extends StatefulWidget {
+  final dpurl;
+  DashBoard({this.dpurl});
   @override
   _DashBoardState createState() => _DashBoardState();
 }
@@ -13,9 +15,6 @@ class DashBoard extends StatefulWidget {
 class _DashBoardState extends State<DashBoard> {
   String uid;
   Map _userDetails;
-  String _userDpUrl;
-  String _dpDefault =
-      "https://firebasestorage.googleapis.com/v0/b/lendbook-5b2b7.appspot.com/o/profilePics%2Fcat-icon.png?alt=media&token=98ddcd8e-a584-4488-b115-32c2b0ac39e1";
 
   Future<void> _getUID() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
@@ -29,7 +28,6 @@ class _DashBoardState extends State<DashBoard> {
     _db.collection("userDetails").document(uid).get().then((value) {
       setState(() {
         _userDetails = value.data;
-        _userDpUrl = value.data['dpurl'];
       });
     });
   }
@@ -67,9 +65,7 @@ class _DashBoardState extends State<DashBoard> {
                     height: 80,
                     width: 80,
                     child: CircleAvatar(
-                      backgroundImage: CachedNetworkImageProvider(
-                          _userDpUrl == null ? _dpDefault : _userDpUrl,
-                          scale: 3.0),
+                      backgroundImage: CachedNetworkImageProvider(widget.dpurl),
                     ),
                   )),
                   SizedBox(

@@ -17,9 +17,6 @@ main(List<String> args) {
   if (brightness == Brightness.dark) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light
         .copyWith(systemNavigationBarColor: Colors.black));
-  } else {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light
-        .copyWith(systemNavigationBarColor: Colors.white));
   }
 }
 
@@ -46,11 +43,11 @@ class App extends StatelessWidget {
           accentColor: Color(0xFFF2C94C),
           accentColorBrightness: Brightness.light),
       darkTheme: ThemeData(
-          scaffoldBackgroundColor: Color(0xFF1b1e23),
+          scaffoldBackgroundColor: Color.fromARGB(255, 34, 40, 49),
           brightness: Brightness.dark,
           inputDecorationTheme: InputDecorationTheme(
               hintStyle: TextStyle(color: Color(0xFFd8dcd6))),
-          cardColor: Color(0xFF1b1e23),
+          cardColor: Color(0xFF30475e),
           cupertinoOverrideTheme: CupertinoThemeData(
               textTheme: CupertinoTextThemeData(primaryColor: Colors.white))),
     );

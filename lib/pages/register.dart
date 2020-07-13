@@ -63,7 +63,7 @@ class _RegisterState extends State<Register> {
         builder: (BuildContext context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                borderRadius: BorderRadius.all(Radius.circular(8.0))),
             title: Text("Verification Email Sent! 📨"),
             content: Text(
                 "Hey, Verification Email Has been sent to you, Please Verify your EmailID for further features like adding Favorites and Reseting Password"),
@@ -123,7 +123,7 @@ class _RegisterState extends State<Register> {
         builder: (BuildContext context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                borderRadius: BorderRadius.all(Radius.circular(8.0))),
             title: Text(title),
             content: Text(content),
             actions: <Widget>[

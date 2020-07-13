@@ -15,6 +15,7 @@ class MsgReq extends StatelessWidget {
       senderuid,
       interestedbook,
       bookgrade,
+      booksub,
       interestedbookdonor;
   MsgReq(
       {Key key,
@@ -26,7 +27,8 @@ class MsgReq extends StatelessWidget {
       this.senderuid,
       this.interestedbook,
       this.interestedbookdonor,
-      this.bookgrade});
+      this.bookgrade,
+      this.booksub});
 
   @override
   Widget build(BuildContext context) {
@@ -37,19 +39,19 @@ class MsgReq extends StatelessWidget {
               borderRadius: BorderRadius.circular(8.0),
               color: brightness == Brightness.light
                   ? Color.fromARGB(255, 238, 238, 238)
-                  : Color(0xFF181b20),
+                  : Color(0xFF161a20),
               boxShadow: [
                 BoxShadow(
                     offset: Offset(3, 3),
                     color: brightness == Brightness.light
                         ? Color.fromARGB(50, 0, 0, 0)
-                        : Color.fromARGB(90, 0, 0, 0),
+                        : Color.fromARGB(30, 0, 0, 0),
                     blurRadius: 15),
                 BoxShadow(
                     offset: Offset(-3, -3),
                     color: brightness == Brightness.light
                         ? Color.fromARGB(130, 255, 255, 255)
-                        : Color.fromARGB(80, 0, 0, 0),
+                        : Color.fromARGB(35, 0, 0, 0),
                     blurRadius: 15)
               ]),
           margin: EdgeInsets.all(1),
@@ -64,6 +66,7 @@ class MsgReq extends StatelessWidget {
                   sendername: sendername,
                   senderuid: senderuid,
                   interestedbook: interestedbook,
+                  interestedbooksub: booksub,
                   donoruid: interestedbookdonor,
                   bookgrade: bookgrade,
                 );

@@ -66,7 +66,8 @@ class _MessagesState extends State<Messages> {
                             interestedbook: document['interestedinbook'],
                             interestedbookdonor:
                                 document['interestedbookdonor'],
-                            bookgrade: document['bookgrade'],
+                            bookgrade: document['interestedbookgrade'],
+                            booksub: document['interestedbooksub'],
                             sendername: document['sendername']);
                       }).toList(),
                     );

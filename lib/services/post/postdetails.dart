@@ -38,7 +38,8 @@ class PostDetails extends StatefulWidget {
       this.bookpickupaddress,
       this.lat,
       this.lon,
-      this.bookid, this.bookgrade});
+      this.bookid,
+      this.bookgrade});
 
   @override
   _PostDetailsState createState() => _PostDetailsState();
@@ -161,9 +162,10 @@ class _PostDetailsState extends State<PostDetails> {
                       donorname: this.widget.donorname,
                       bookgrade: this.widget.bookgrade,
                       donoruid: this.widget.donoruid,
-                      bookid : this.widget.bookid,
+                      bookid: this.widget.bookid,
                       donorimg: this.widget.donorimage,
                       interestedbook: this.widget.bookid,
+                      interestedbooksub: this.widget.booksubject,
                     );
                   }));
                 }),
