@@ -97,6 +97,39 @@ class _AddBookState extends State<AddBook> {
         });
   }
 
+  Future<void> _gpsDialog() async {
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0))),
+            content:
+                Text("For Presice location you need to turn on GPS service"),
+            actions: <Widget>[
+              CupertinoButton(
+                  child: Text(
+                    "Okay !",
+                    style: TextStyle(color: Colors.green),
+                  ),
+                  onPressed: () {
+                    openLocationSetting();
+                    Navigator.of(context).pop();
+                  }),
+              CupertinoButton(
+                  child: Text(
+                    "Cancel",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  })
+            ],
+          );
+        });
+  }
+
   Future<void> _basicAlerts(
       String title, String content, String variant) async {
     if (variant == "error") {
@@ -173,8 +206,7 @@ class _AddBookState extends State<AddBook> {
   }
 
   Future<void> _getLocationViaGmaps() async {
-    Permission.location.request().whenComplete(
-        () => {openLocationSetting(), Toast.show("Turn On Location", context)});
+    await Permission.location.request().whenComplete(() => {_gpsDialog()});
     await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((value) {

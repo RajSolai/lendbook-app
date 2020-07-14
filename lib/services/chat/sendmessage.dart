@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:lendbook/components/CustomAppBar.dart';
 import 'package:lendbook/services/chat/messagebox.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 class SendMessage extends StatefulWidget {
   final donoruid,
@@ -225,7 +226,12 @@ class _SendMessageState extends State<SendMessage> {
                         child: IconButton(
                             icon: Icon(Icons.send),
                             onPressed: () {
-                              _sendRes();
+                              if (_message != null) {
+                                _sendRes();
+                              } else {
+                                Toast.show("Type in a Message to Send", context,
+                                    backgroundColor: Color(0xFF9852f9));
+                              }
                             }),
                       ),
                     )
@@ -302,7 +308,12 @@ class _SendMessageState extends State<SendMessage> {
                         child: IconButton(
                             icon: Icon(Icons.send),
                             onPressed: () {
-                              _sendMessage();
+                              if (_message != null) {
+                                _sendMessage();
+                              } else {
+                                Toast.show("Type in a Message to Send", context,
+                                    backgroundColor: Color(0xFF9852f9));
+                              }
                             }),
                       ),
                     )
