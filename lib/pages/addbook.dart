@@ -163,7 +163,7 @@ class _AddBookState extends State<AddBook> {
                 CupertinoButton(
                     child: Text("Okay"),
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.pushNamed(context, "/home");
                     }),
                 CupertinoButton(
                     child: Text("View Donations"),

@@ -179,7 +179,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               width: 5,
             ),
             Container(
-              margin: EdgeInsets.only(top: 40, bottom: 0, right: 90),
+              margin: EdgeInsets.only(top: 40, bottom: 0, right: 60),
               padding: EdgeInsets.all(10),
               child: Text(
                 this.widget.title,
@@ -187,9 +187,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
-            /* SizedBox(
-              width: 80,
-            ), */
             Container(
                 margin: EdgeInsets.only(top: 40, bottom: 0),
                 child: FlatButton.icon(
@@ -199,7 +196,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ),
                     label: Text(
                       "Donate",
-                      style: TextStyle(fontSize: 16),
                       textScaleFactor: 1.0,
                     ),
                     onPressed: () {

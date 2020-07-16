@@ -25,8 +25,6 @@ class _RegisterState extends State<Register> {
   String dp;
   String _city;
   String _state;
-  String _phoneno;
-  String _waphoneno;
   String _userInterestSchool;
   String _userInterestCollege;
   String userState;
@@ -143,9 +141,7 @@ class _RegisterState extends State<Register> {
         displayname != null &&
         _city != null &&
         _state != null &&
-        _isSchool != null &&
-        _phoneno != null &&
-        _waphoneno != null) {
+        _isSchool != null) {
       _signUp(email, pass, displayname);
     } else {
       _loginAlerts("Values Not Filled 😕",
@@ -186,8 +182,6 @@ class _RegisterState extends State<Register> {
         'dpurl': _dpImageUrl == null ? _dpDefault : _dpImageUrl,
         'city': _city.toUpperCase(),
         'state': _state.toUpperCase(),
-        'phone': _phoneno,
-        'waphone': _waphoneno,
         'grade': _isSchool ? "School" : "College",
         'userinterest': _userInterestSchool == null
             ? _userInterestCollege
@@ -301,7 +295,6 @@ class _RegisterState extends State<Register> {
                             height: 15,
                           ),
                           TextField(
-                              obscureText: true,
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10)),
@@ -324,7 +317,6 @@ class _RegisterState extends State<Register> {
                             height: 15,
                           ),
                           TextField(
-                              obscureText: true,
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10)),
@@ -332,52 +324,6 @@ class _RegisterState extends State<Register> {
                               onChanged: (value) {
                                 setState(() {
                                   _city = value;
-                                });
-                              }),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Text(
-                            "Phone Number (without +91)",
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          TextField(
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  hintText: 'eg : 9984452254'),
-                              onChanged: (value) {
-                                setState(() {
-                                  _phoneno = value;
-                                });
-                              }),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Text(
-                            "WhatsApp Number (without +91)",
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          TextField(
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  hintText: 'eg : 9984452254'),
-                              onChanged: (value) {
-                                setState(() {
-                                  _waphoneno = value;
                                 });
                               }),
                           SizedBox(

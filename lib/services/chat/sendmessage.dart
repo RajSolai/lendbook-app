@@ -294,9 +294,17 @@ class _SendMessageState extends State<SendMessage> {
                       child: TextField(
                           controller: _messageCtrl,
                           decoration: InputDecoration(
+                              filled: true,
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              hintText: "Type in Your Message"),
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              contentPadding: EdgeInsets.only(
+                                  left: 15, bottom: 11, top: 11, right: 15),
+                              fillColor: brightness == Brightness.dark
+                                  ? Color(0xFF666a6d)
+                                  : Color(0xFFd8dcd6),
+                              hintText: "Enter your Message"),
                           onChanged: (value) {
                             setState(() {
                               _message = value;
