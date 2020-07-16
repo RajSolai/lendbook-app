@@ -6,7 +6,7 @@ A Social Networking Applications that enables Users to donate education oriented
 
 ## Download v1.0
 
-[Click Here to Download v1.0 apk](https://mega.nz/file/Hko0xKJa#v3qQGqs7VR1_SXo6gvazj39u51zOVW5cCO1eg-a5nl4)
+[Click Here to Download v1.0 apk](https://mega.nz/file/KkgkmYgI#6aieBVGiCnUumIesio_PkhYtIUZPhTbr1QdN4YT45ks)
 
 ### Developer Notes
 
