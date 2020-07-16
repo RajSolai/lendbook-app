@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lendbook/animations/slidepageroute.dart';
 import 'package:lendbook/pages/dash.dart';
@@ -88,7 +87,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         .delete()
                         .whenComplete(() => {
                               Toast.show("Completed Donation Process", context,
-                                  backgroundColor: Color(0xFF9852f9))
+                                  backgroundColor: Color(0xFF9852f9)),
+                              Navigator.of(context).pop()
                             });
                   }),
               CupertinoButton(
@@ -341,6 +341,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 animationType: BadgeAnimationType.fade,
                 badgeContent: Text(
                   _getInboxcount() == null ? '0' : _getInboxcount(),
+                  textScaleFactor: 1.0,
                   style: TextStyle(
                       color: Colors.white, fontWeight: FontWeight.w500),
                 ),

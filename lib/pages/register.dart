@@ -217,7 +217,7 @@ class _RegisterState extends State<Register> {
                     ),
                     SizedBox(height: 25),
                     Container(
-                      padding: EdgeInsets.all(50),
+                      padding: EdgeInsets.all(20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -515,6 +515,7 @@ class _RegisterState extends State<Register> {
                                     borderRadius: BorderRadius.circular(10),
                                     child: Text(
                                       "Upload",
+                                      textScaleFactor: 1.0,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500),
                                     ),
@@ -528,6 +529,7 @@ class _RegisterState extends State<Register> {
                                     borderRadius: BorderRadius.circular(10),
                                     child: Text(
                                       "Clear",
+                                      textScaleFactor: 1.0,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500),
                                     ),

@@ -89,6 +89,7 @@ class _HomeState extends State<Home> {
                 padding: EdgeInsets.all(10),
                 child: Text(
                   "Books Based on your Favorite Subject !",
+                  textScaleFactor: 1.0,
                   style: TextStyle(fontWeight: FontWeight.w200, fontSize: 16),
                 ),
               ),

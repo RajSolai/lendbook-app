@@ -36,7 +36,6 @@ class _AddBookState extends State<AddBook> {
   String _bookCollegeSubject = "Physics";
   Map _userDetails;
   String _bookSubject;
-  // TODO : Change to another image
   String _dpDefault =
       "https://firebasestorage.googleapis.com/v0/b/lendbook-5b2b7.appspot.com/o/profilePics%2Fcat-icon.png?alt=media&token=98ddcd8e-a584-4488-b115-32c2b0ac39e1";
 
@@ -105,6 +104,7 @@ class _AddBookState extends State<AddBook> {
           return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8.0))),
+            title: Text("Turn on Location Services"),
             content:
                 Text("For Presice location you need to turn on GPS service"),
             actions: <Widget>[

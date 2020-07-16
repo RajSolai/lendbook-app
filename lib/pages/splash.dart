@@ -17,7 +17,7 @@ class _SplashState extends State<Splash> {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     uid = _prefs.getString("uid");
     if (uid == null) {
-      Navigator.pushReplacementNamed(context, "/register");
+      Navigator.pushReplacementNamed(context, "/login");
     } else {
       Navigator.pushReplacementNamed(context, "/home");
     }

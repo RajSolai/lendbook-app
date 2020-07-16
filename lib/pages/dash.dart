@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:lendbook/components/CustomAppBar.dart';
@@ -23,6 +24,11 @@ class _DashBoardState extends State<DashBoard> {
     });
   }
 
+  Future<void> _deleteuserData() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    _prefs.clear();
+  }
+
   Future<void> _getUserData() async {
     Firestore _db = Firestore.instance;
     _db.collection("userDetails").document(uid).get().then((value) {
@@ -30,6 +36,77 @@ class _DashBoardState extends State<DashBoard> {
         _userDetails = value.data;
       });
     });
+  }
+
+  Future<void> _signOutDialog() async {
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0))),
+            title: Text("Delete Account"),
+            content: Text("Do Really Want to Delete the Account ?"),
+            actions: <Widget>[
+              CupertinoButton(
+                  child: Text(
+                    "Yes",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  onPressed: () {
+                    FirebaseAuth.instance.currentUser().then((user) => {
+                          _deleteuserData(),
+                          Navigator.pushReplacementNamed(context, "/login"),
+                        });
+                  }),
+              CupertinoButton(
+                  child: Text(
+                    "Cancel",
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  })
+            ],
+          );
+        });
+  }
+
+  Future<void> _deleteDialog() async {
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0))),
+            title: Text("Delete Account"),
+            content: Text("Do Really Want to Delete the Account ?"),
+            actions: <Widget>[
+              CupertinoButton(
+                  child: Text(
+                    "Yes",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  onPressed: () {
+                    FirebaseAuth.instance.currentUser().then((user) => {
+                          user.delete().whenComplete(() => {
+                                _deleteuserData(),
+                                Navigator.pushReplacementNamed(
+                                    context, "/login"),
+                              })
+                        });
+                  }),
+              CupertinoButton(
+                  child: Text(
+                    "Cancel",
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  })
+            ],
+          );
+        });
   }
 
   @override
@@ -129,6 +206,26 @@ class _DashBoardState extends State<DashBoard> {
                   child: Text("View your Donations"),
                   onPressed: () {
                     Navigator.pushNamed(context, "/posts");
+                  }),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Center(
+              child: CupertinoButton(
+                  child: Text("Sign Out", style: TextStyle(color: Colors.red)),
+                  onPressed: () {
+                    _signOutDialog();
+                  }),
+            ),
+            Center(
+              child: CupertinoButton(
+                  child: Text(
+                    "Delete Account",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  onPressed: () {
+                    _deleteDialog();
                   }),
             )
           ],

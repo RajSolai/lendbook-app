@@ -32,85 +32,90 @@ class PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.all(10),
-        width: double.maxFinite,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.0),
-          color: brightness == Brightness.light
-              ? Color.fromARGB(255, 238, 238, 238)
-              : Color(0xFF181b20),
-          boxShadow: <BoxShadow>[
-            brightness == Brightness.light
-                ? BoxShadow(
-                    offset: Offset(1, 1),
-                    color: Color.fromARGB(80, 0, 0, 0),
-                    blurRadius: 5)
-                : BoxShadow(
-                    offset: Offset(1, 1),
-                    color: Color.fromARGB(100, 0, 0, 0),
-                    blurRadius: 15)
-          ],
-        ),
-        child: GestureDetector(
-          onTap: () {
-            Navigator.push(context,
-                CupertinoPageRoute(builder: (BuildContext context) {
-              return PostDetails(
-                donorname: this.donorname,
-                donorph: this.donorph,
-                donoruid: this.donoruid,
-                donorwa: this.donorwa,
-                bookname: this.bookName,
-                bookimgurl: this.bookImageUrl,
-                bookdonorimgurl: this.donorimg,
-              );
-            }));
-          },
-          child: Column(
-            children: <Widget>[
-              Container(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0)),
-                  child: CachedNetworkImage(
-                      imageUrl:
-                          bookImageUrl == null ? defaultImage : bookImageUrl,
-                      placeholder: (context, url) => Text("Loading Image...")),
-                ),
-              ),
-              Container(
-                child: Column(
-                  children: <Widget>[
-                    ListTile(
-                      title: Text(
-                        "Book Name :",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      trailing: Text(bookName == null ? "No Name" : bookName),
+        margin: EdgeInsets.all(5.0),
+        child: Container(
+            padding: EdgeInsets.all(10),
+            width: double.maxFinite,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              color: brightness == Brightness.light
+                  ? Color.fromARGB(255, 238, 238, 238)
+                  : Color(0xFF181b20),
+              boxShadow: <BoxShadow>[
+                brightness == Brightness.light
+                    ? BoxShadow(
+                        offset: Offset(1, 1),
+                        color: Color.fromARGB(80, 0, 0, 0),
+                        blurRadius: 5)
+                    : BoxShadow(
+                        offset: Offset(1, 1),
+                        color: Color.fromARGB(100, 0, 0, 0),
+                        blurRadius: 15)
+              ],
+            ),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(context,
+                    CupertinoPageRoute(builder: (BuildContext context) {
+                  return PostDetails(
+                    donorname: this.donorname,
+                    donorph: this.donorph,
+                    donoruid: this.donoruid,
+                    donorwa: this.donorwa,
+                    bookname: this.bookName,
+                    bookimgurl: this.bookImageUrl,
+                    bookdonorimgurl: this.donorimg,
+                  );
+                }));
+              },
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0)),
+                      child: CachedNetworkImage(
+                          imageUrl: bookImageUrl == null
+                              ? defaultImage
+                              : bookImageUrl,
+                          placeholder: (context, url) =>
+                              Text("Loading Image...")),
                     ),
-                    ListTile(
-                      title: Text(
-                        "Book Subject :",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      trailing: Text(
-                          bookSubject == null ? "No Subject" : bookSubject),
+                  ),
+                  Container(
+                    child: Column(
+                      children: <Widget>[
+                        ListTile(
+                          title: Text(
+                            "Book Name :",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          trailing:
+                              Text(bookName == null ? "No Name" : bookName),
+                        ),
+                        ListTile(
+                          title: Text(
+                            "Book Subject :",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          trailing: Text(
+                              bookSubject == null ? "No Subject" : bookSubject),
+                        ),
+                        ListTile(
+                          title: Text(
+                            "Posted on :",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          trailing: Text(postedDate == null
+                              ? "No data"
+                              : postedDate.toString().substring(0, 10)),
+                        )
+                      ],
                     ),
-                    ListTile(
-                      title: Text(
-                        "Posted on :",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      trailing: Text(postedDate == null
-                          ? "No data"
-                          : postedDate.toString().substring(0, 10)),
-                    )
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ));
+            )));
   }
 }

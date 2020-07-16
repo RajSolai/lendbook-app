@@ -170,7 +170,7 @@ class _LoginState extends State<Login> {
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10)),
-                                  hintText: "example : username@domain.com"),
+                                  hintText: "username@domain.com"),
                               onChanged: (value) {
                                 setState(() {
                                   emailid = value;
@@ -194,8 +194,7 @@ class _LoginState extends State<Login> {
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10)),
-                                  hintText:
-                                      "must contain atleast 6 characters"),
+                                  hintText: "atleast 6 characters"),
                               onChanged: (value) {
                                 setState(() {
                                   password = value;
@@ -238,16 +237,6 @@ class _LoginState extends State<Login> {
                         _forgetPass(emailid);
                       },
                     ),
-                    // TODO : Remove this on Production
-                    CupertinoButton(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Text("SKIP_LOGIN",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500)),
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(context, "/home");
-                        }),
                   ],
                 ))));
   }
