@@ -46,8 +46,8 @@ class _DashBoardState extends State<DashBoard> {
           return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8.0))),
-            title: Text("Delete Account"),
-            content: Text("Do Really Want to Delete the Account ?"),
+            title: Text("Sign Out"),
+            content: Text("Do Really Want to Logout from the App ?"),
             actions: <Widget>[
               CupertinoButton(
                   child: Text(
@@ -178,26 +178,6 @@ class _DashBoardState extends State<DashBoard> {
                         ? "Loading"
                         : _userDetails["city"]),
                   ),
-                  ListTile(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 40),
-                    title: Text(
-                      "Phone Number",
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    trailing: Text(_userDetails == null
-                        ? "Loading"
-                        : "(+91) " + _userDetails["phone"]),
-                  ),
-                  ListTile(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 40),
-                    title: Text(
-                      "WhatsApp Number",
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    trailing: Text(_userDetails == null
-                        ? "Loading"
-                        : "(+91) " + _userDetails["waphone"]),
-                  )
                 ],
               ),
             ),
